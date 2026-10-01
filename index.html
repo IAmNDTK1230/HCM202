@@ -914,7 +914,7 @@
     let currentRole = null;
     let currentPhase = 'idle';
     const QUESTION_TIME = 20;
-    const REVIEW_TIME = 4;
+    const REVIEW_TIME = 6;
     let localPlayerId = sessionStorage.getItem('mlnPlayerId') || ('p_' + Math.random().toString(36).slice(2,10));
     let localPlayerName = '';
     let unsubscribeRoom = null;
@@ -1423,6 +1423,21 @@
             playing = false;
             clearInterval(timer);
             setAnswerDisabled(true);
+
+            // Firestore có thể chuyển sang review trước khi timer cục bộ kịp chạy về 0.
+            // Vì vậy luôn ép hiển thị toàn bộ đáp án ở phase review.
+            const reviewPuzzle = puzzles[remoteRound];
+            if(reviewPuzzle){
+              renderAnswerBoxes(
+                reviewPuzzle.answer,
+                reviewPuzzle.answer,
+                getLetterCount(reviewPuzzle.answer)
+              );
+              if($('answerState')){
+                $('answerState').textContent = `Đáp án: ${reviewPuzzle.answer}`;
+              }
+            }
+
             setQuestionSummaryVisible(true, roomData.reviewMessage || 'Đã hoàn thành câu này. Chuẩn bị chuyển sang câu tiếp theo...');
             renderRoundLeaderboard();
             $('statusText').textContent = currentRole === 'host'
@@ -1565,12 +1580,18 @@
       }
 
       if(timeLeft <= 0 && playing){
+        // Luôn hiện đáp án ngay khi hết giờ trên mọi thiết bị trước khi chuyển phase.
+        if(puzzle){
+          setAnswerDisabled(true);
+          renderAnswerBoxes(puzzle.answer, puzzle.answer, getLetterCount(puzzle.answer));
+          if($('answerState')){
+            $('answerState').textContent = `Hết giờ. Đáp án: ${puzzle.answer}`;
+          }
+        }
+
+        // Chỉ quản trò có quyền chuyển phòng sang màn tổng kết.
         if(currentRole === 'host'){
           openRoundReview(`Hết giờ câu ${round+1}.`);
-        }else{
-          setAnswerDisabled(true);
-          $('answerState').textContent = `Hết giờ. Đáp án: ${puzzle ? puzzle.answer : ''}`;
-          renderAnswerBoxes(puzzle.answer, puzzle.answer, getLetterCount(puzzle.answer));
         }
       }
     }
