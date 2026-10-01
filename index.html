@@ -1,0 +1,1749 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MLN122 · Nguyên tắc đoàn kết quốc tế</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap');
+
+    :root {
+      --bg: #0a0c12;
+      --surface-1: #111318;
+      --surface-2: #181b24;
+      --surface-3: #1f2330;
+      --border: rgba(255,255,255,0.06);
+      --border-hover: rgba(255,255,255,0.12);
+      --text: #eeeef2;
+      --text-secondary: #9295a8;
+      --primary: #7c6cf6;
+      --primary-soft: rgba(124,108,246,0.12);
+      --accent: #00e5a0;
+      --accent-soft: rgba(0,229,160,0.10);
+      --gold: #ffb800;
+      --red: #ff4d6b;
+      --blue: #4d9fff;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: "Be Vietnam Pro", system-ui, sans-serif;
+      background-color: var(--bg);
+      background-image: radial-gradient(circle at 50% 0%, rgba(124,108,246,0.08), transparent 60%);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+      animation: slideUp 0.6s ease-out;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(255,77,107,0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(255,77,107,0); }
+      100% { box-shadow: 0 0 0 0 rgba(255,77,107,0); }
+    }
+    @keyframes popIn {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    header {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(10, 12, 18, 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav {
+      max-width: 1200px; margin: 0 auto;
+      height: 64px; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .logo {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: var(--primary); display: grid; place-items: center;
+      font-weight: 800; color: #fff; font-size: 14px;
+    }
+    .brand-title { font-weight: 800; font-size: 14px; }
+    .brand-sub { font-size: 11px; color: var(--text-secondary); }
+    
+    .nav-tabs { display: flex; gap: 8px; }
+    .tab-btn {
+      background: var(--surface-2); border: 1px solid var(--border);
+      color: var(--text-secondary); padding: 8px 16px; border-radius: 999px;
+      font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .tab-btn:hover { background: var(--surface-3); color: var(--text); }
+    .tab-btn.active {
+      background: var(--primary); border-color: var(--primary);
+      color: #fff;
+    }
+
+    main { max-width: 1200px; margin: 0 auto; padding: 40px 24px; }
+    
+    /* Hero */
+    .hero { text-align: center; margin-bottom: 48px; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 12px; border-radius: 999px;
+      background: var(--primary-soft); color: var(--primary);
+      font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+    .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--primary); }
+    h1 { font-size: clamp(32px, 5vw, 48px); font-weight: 900; line-height: 1.1; margin-bottom: 16px; letter-spacing: -1px; }
+    .accent-text { color: var(--primary); }
+    .lead { color: var(--text-secondary); max-width: 600px; margin: 0 auto 24px; font-size: 16px; }
+    .hero-stats { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+    .hero-stats div {
+      background: var(--surface-1); border: 1px solid var(--border);
+      padding: 12px 24px; border-radius: 16px; display: flex; flex-direction: column;
+      min-width: 120px;
+    }
+    .hero-stats b { font-size: 24px; color: var(--text); font-weight: 800; }
+    .hero-stats span { font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+
+    /* Quick Actions */
+    .quick-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 48px; }
+    .action-card {
+      background: var(--surface-1); border: 1px solid var(--border);
+      border-radius: 20px; padding: 24px; text-align: left;
+      cursor: pointer; transition: all 0.2s ease;
+      display: flex; flex-direction: column;
+    }
+    .action-card:hover { transform: translateY(-4px); border-color: var(--border-hover); background: var(--surface-2); box-shadow: 0 12px 24px rgba(0,0,0,0.2); }
+    .action-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      display: grid; place-items: center; font-size: 24px; margin-bottom: 16px;
+    }
+    .action-host .action-icon { background: var(--primary-soft); color: var(--primary); }
+    .action-join .action-icon { background: rgba(255,184,0,0.1); color: var(--gold); }
+    .action-ai .action-icon { background: var(--accent-soft); color: var(--accent); }
+    .action-tag { font-size: 10px; font-weight: 800; letter-spacing: 1px; margin-bottom: 8px; }
+    .action-host .action-tag { color: var(--primary); }
+    .action-join .action-tag { color: var(--gold); }
+    .action-ai .action-tag { color: var(--accent); }
+    .action-card strong { font-size: 18px; margin-bottom: 8px; color: var(--text); font-weight: 700; }
+    .action-card p { color: var(--text-secondary); font-size: 13px; margin-bottom: 16px; flex-grow: 1; }
+    .action-link { font-size: 13px; font-weight: 600; color: var(--text); opacity: 0.7; }
+    .action-card:hover .action-link { opacity: 1; }
+
+    /* Game Area */
+    .surface {
+      background: var(--surface-1); border: 1px solid var(--border);
+      border-radius: 24px; padding: 32px;
+    }
+    .section-head { margin-bottom: 24px; }
+    .kicker { font-size: 12px; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    h2 { font-size: 28px; font-weight: 800; }
+    
+    .game-mode-tabs { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; justify-content: center; background: var(--surface-2); padding: 8px; border-radius: 16px; width: fit-content; margin: 0 auto 32px; }
+    .game-mode-btn {
+      background: transparent; border: none; color: var(--text-secondary);
+      padding: 10px 20px; border-radius: 12px; font-family: inherit; font-weight: 600; font-size: 14px;
+      cursor: pointer; transition: 0.2s ease;
+    }
+    .game-mode-btn:hover { color: var(--text); }
+    .game-mode-btn.active { background: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(124,108,246,0.3); }
+    
+    .game-mode-panel { display: none; animation: slideUp 0.3s ease; }
+    .game-mode-panel.show { display: block; }
+    
+    .game-btn {
+      background: var(--primary); color: #fff; border: none;
+      padding: 12px 24px; border-radius: 12px; font-family: inherit; font-weight: 700; font-size: 14px;
+      cursor: pointer; transition: 0.2s ease; display: inline-flex; justify-content: center; align-items: center;
+    }
+    .game-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+    .game-btn:active { transform: translateY(1px); }
+    .game-btn.alt { background: var(--surface-2); border: 1px solid var(--border); color: var(--text); }
+    .game-btn.alt:hover { background: var(--surface-3); }
+    .game-btn.good { background: var(--accent); color: #000; }
+    
+    .mode-back { margin-bottom: 24px; }
+
+    /* Roles */
+    .role-screen { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .role-card {
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 20px; padding: 32px; text-align: center;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .role-icon { font-size: 48px; margin-bottom: 16px; width: 80px; height: 80px; display: grid; place-items: center; border-radius: 50%; background: var(--surface-3); }
+    .role-card h3 { font-size: 24px; margin-bottom: 12px; }
+    .role-card p { color: var(--text-secondary); margin-bottom: 24px; font-size: 14px; }
+    .role-select {
+      width: 100%; background: var(--primary); color: #fff; border: none;
+      padding: 14px; border-radius: 12px; font-family: inherit; font-weight: 700; font-size: 15px;
+      cursor: pointer; transition: 0.2s ease;
+    }
+    .role-select.amber { background: var(--gold); color: #000; }
+    .amber-btn { background: var(--gold) !important; color: #000 !important; }
+    .role-select:hover { filter: brightness(1.1); }
+    
+    .role-form { width: 100%; display: none; flex-direction: column; gap: 12px; margin-top: 24px; }
+    .role-form.show { display: flex; }
+    .room-input {
+      width: 100%; background: var(--surface-1); border: 1px solid var(--border);
+      color: var(--text); padding: 14px; border-radius: 12px; font-family: inherit; font-size: 14px;
+      outline: none; transition: 0.2s ease;
+    }
+    .room-input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-soft); }
+    
+    /* Lobby */
+    .room-lobby { display: none; grid-template-columns: 1.5fr 1fr; gap: 24px; }
+    .room-lobby.show { display: grid; }
+    .room-card { background: var(--surface-2); border: 1px solid var(--border); border-radius: 20px; padding: 24px; }
+    .lobby-main { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+    .badge {
+      display: inline-flex; align-items: center; padding: 6px 12px; border-radius: 999px;
+      background: var(--surface-3); border: 1px solid var(--border);
+      font-size: 12px; font-weight: 700; color: var(--text);
+    }
+    .badge.hot { background: rgba(255,77,107,0.1); border-color: rgba(255,77,107,0.2); color: var(--red); }
+    .big-room-code {
+      margin: 24px 0; background: var(--surface-1); border: 1px solid var(--primary-soft);
+      padding: 24px 48px; border-radius: 16px; text-align: center;
+    }
+    .big-room-code span { display: block; font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .big-room-code b { font-size: 48px; font-weight: 900; letter-spacing: 8px; color: var(--primary); font-variant-numeric: tabular-nums; line-height: 1; display: block; }
+    
+    .player-list { display: grid; gap: 8px; margin-top: 16px; }
+    .player {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 16px; background: var(--surface-1); border: 1px solid var(--border);
+      border-radius: 12px; font-size: 14px; font-weight: 600;
+    }
+
+    /* Game Stage */
+    .game-stage { display: none; grid-template-columns: 1.5fr 1fr; gap: 24px; }
+    .game-stage.show { display: grid; }
+    .game-stage.player-view { grid-template-columns: 1fr; max-width: 800px; margin: 0 auto; }
+    .game-stage.player-view .host-side { display: none; }
+    .game-stage.show-final { grid-template-columns: 1fr; }
+    .game-stage.show-final .game-main-card, .game-stage.show-final .host-side, .game-stage.show-final .round-summary-card { display: none !important; }
+    
+    .game-card { background: var(--surface-2); border: 1px solid var(--border); border-radius: 20px; padding: 24px; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+    .game-main-card { min-height: 500px; }
+    
+    .game-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .timer-ring {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: conic-gradient(var(--accent) var(--progress, 100%), var(--surface-3) 0);
+      display: grid; place-items: center; font-weight: 800; font-size: 16px; color: var(--text);
+    }
+    .timer-ring span {
+      width: 54px; height: 54px; border-radius: 50%; background: var(--surface-2);
+      display: grid; place-items: center;
+    }
+    .timer-ring.danger { animation: pulse 1s infinite; }
+
+    .puzzle-frame {
+      flex-grow: 1; background: var(--surface-1); border: 1px solid var(--border);
+      border-radius: 16px; display: grid; place-items: center; position: relative;
+      margin-bottom: 24px; min-height: 240px; padding: 24px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+    }
+    .puzzle-title { position: absolute; top: 16px; left: 16px; display: flex; gap: 8px; z-index: 2; }
+    .puzzle-img { width: 100%; height: 100%; object-fit: contain; display: none; border-radius: 8px; }
+    .puzzle-img.show { display: block; }
+    .puzzle-art { font-size: 64px; letter-spacing: 16px; }
+    .puzzle-frame.has-image { background: #000; padding: 12px; border-color: rgba(255,255,255,0.1); }
+    
+    .puzzle-question { font-size: 18px; font-weight: 700; margin-bottom: 12px; text-align: center; }
+    .hint-box { font-size: 14px; color: var(--text-secondary); text-align: center; margin-bottom: 24px; background: var(--surface-1); padding: 12px; border-radius: 12px; border: 1px solid var(--border); }
+    
+    .reveal-word { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+    .letter-box {
+      width: 52px; height: 60px; border-radius: 12px;
+      background: var(--surface-3); border: 1px solid var(--border);
+      display: grid; place-items: center; font-size: 24px; font-weight: 800; color: #fff;
+    }
+    .letter-box.blank { background: var(--surface-1); color: transparent; border-style: dashed; }
+    .letter-box.revealed { background: var(--primary); border-color: var(--primary); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .letter-space { width: 20px; }
+    
+    .answer-row { display: flex; gap: 12px; width: 100%; }
+    .game-input {
+      flex-grow: 1; background: var(--surface-1); border: 1px solid var(--border);
+      color: var(--text); padding: 14px 20px; border-radius: 12px; font-family: inherit; font-size: 16px; outline: none; transition: 0.2s ease;
+    }
+    .game-input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-soft); }
+    .game-input:disabled { opacity: 0.5; cursor: not-allowed; }
+    .answer-state { margin-top: 12px; text-align: center; font-size: 14px; font-weight: 600; color: var(--gold); min-height: 21px; }
+
+    .host-side { display: grid; gap: 24px; grid-auto-rows: min-content; }
+    .host-status-box {
+      background: var(--surface-1); border: 1px solid var(--border);
+      padding: 16px; border-radius: 12px; margin: 16px 0;
+    }
+    .host-status-box b { display: block; font-size: 16px; margin-bottom: 4px; }
+    .host-status-box p { color: var(--text-secondary); font-size: 13px; margin: 0; }
+    .room-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+    
+    .leaderboard { display: grid; gap: 8px; }
+    .rank {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 16px; background: var(--surface-1); border: 1px solid var(--border);
+      border-radius: 12px; font-size: 14px; font-weight: 600;
+    }
+    .rank.me { border-color: var(--primary); background: var(--primary-soft); }
+    .leaderboard.big .rank { padding: 16px 20px; font-size: 18px; border-radius: 16px; }
+    
+    .round-summary-card, .final-summary-card { display: none; grid-column: 1 / -1; }
+    .round-summary-card.show, .final-summary-card.show { display: flex; animation: slideUp 0.3s ease; }
+    .final-title { display: flex; justify-content: space-between; margin-bottom: 24px; align-items: flex-start; }
+    
+    /* Practice Mode */
+    .practice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .practice-card { background: var(--surface-2); border: 1px solid var(--border); border-radius: 20px; padding: 24px; }
+    .ai-source-box { margin-top: 24px; display: grid; gap: 16px; }
+    .ai-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .ai-field label { display: block; font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; }
+    .ai-field select, .ai-field input {
+      width: 100%; background: var(--surface-1); border: 1px solid var(--border);
+      color: var(--text); padding: 12px; border-radius: 10px; font-family: inherit; font-size: 14px; outline: none;
+    }
+    .ai-field select:focus, .ai-field input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
+    
+    .practice-quiz { display: none; max-width: 800px; margin: 0 auto; }
+    .practice-quiz.show { display: block; }
+    .practice-main { background: var(--surface-2); border: 1px solid var(--border); border-radius: 20px; padding: 32px; }
+    .practice-progress { height: 6px; background: var(--surface-1); border-radius: 999px; margin-bottom: 24px; overflow: hidden; }
+    .practice-progress span { display: block; height: 100%; background: var(--accent); transition: width 0.3s ease; }
+    .practice-options { display: grid; gap: 12px; margin: 24px 0; }
+    .option-btn {
+      background: var(--surface-1); border: 1px solid var(--border); color: var(--text);
+      padding: 16px; border-radius: 12px; font-family: inherit; font-size: 15px; font-weight: 600;
+      text-align: left; cursor: pointer; transition: 0.2s ease;
+    }
+    .option-btn:hover { border-color: var(--accent); background: var(--accent-soft); }
+    .option-btn.correct { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+    .option-btn.wrong { border-color: var(--red); background: rgba(255,77,107,0.1); color: var(--red); }
+    
+    .blank-answer-box { display: flex; gap: 12px; }
+    .blank-answer-box input {
+      flex-grow: 1; background: var(--surface-1); border: 1px solid var(--border);
+      color: var(--text); padding: 14px 20px; border-radius: 12px; font-family: inherit; font-size: 16px; outline: none;
+    }
+    
+    .ai-explain { display: none; margin-bottom: 24px; padding: 16px; background: var(--surface-1); border-left: 4px solid var(--accent); border-radius: 8px; font-size: 14px; line-height: 1.6; }
+    .ai-explain.show { display: block; }
+    .ai-explain b { display: block; color: var(--accent); margin-bottom: 8px; }
+
+    .confetti { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+    .confetti i { position: absolute; width: 8px; height: 16px; background: var(--accent); top: -20px; animation: fall 1.2s linear forwards; border-radius: 4px; }
+    @keyframes fall { to { transform: translateY(600px) rotate(720deg); opacity: 0; } }
+
+    .hidden { display: none !important; }
+
+    /* Tab panel */
+    .tab-panel { display: block; }
+
+    /* Game shell container */
+    .game-shell { display: grid; gap: 24px; }
+
+    /* Game note text */
+    .game-note { color: var(--text-secondary); font-size: 13px; line-height: 1.6; margin: 0; }
+
+    /* Score panel */
+    .score-panel { display: grid; gap: 24px; }
+
+    /* Host view: hide answer area for host */
+    .game-stage.host-view .answer-row,
+    .game-stage.host-view #answerBoxes,
+    .game-stage.host-view #answerState { display: none; }
+
+    /* Answer row compact layout */
+    .answer-row.compact { display: flex; gap: 12px; width: 100%; }
+
+    /* Practice quiz finished state */
+    .practice-quiz.show.finished .final-practice-card { display: block !important; }
+    .practice-quiz.show.finished #practiceFeed { display: block !important; }
+
+    /* Summary note */
+    .summary-note { margin-top: 16px; color: var(--text-secondary); text-align: center; font-size: 14px; }
+
+    /* Final title text */
+    .final-title h3 { margin: 0; }
+    .final-title p { margin: 8px 0 0; }
+
+    /* Mini actions */
+    .mini-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    /* Score big display */
+    .score-big { font-size: 48px; font-weight: 900; color: var(--gold); line-height: 1; }
+
+    /* Feed container */
+    .feed { max-height: 360px; overflow-y: auto; padding: 12px; border-radius: 12px; background: var(--surface-1); border: 1px solid var(--border); }
+
+    @media (max-width: 768px) {
+      .quick-actions, .role-screen, .room-lobby, .game-stage, .practice-grid, .ai-form-row { grid-template-columns: 1fr; }
+      h1 { font-size: 28px; }
+      .surface { padding: 16px; }
+      .game-card { padding: 16px; }
+      .letter-box { width: 36px; height: 44px; font-size: 18px; }
+      .letter-space { width: 10px; }
+      .answer-row { flex-direction: column; }
+      .puzzle-art { font-size: 40px; letter-spacing: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <div class="brand">
+        <div class="logo">ML</div>
+        <div>
+          <div class="brand-title">MLN122</div>
+          <div class="brand-sub">Nguyên tắc đoàn kết quốc tế</div>
+        </div>
+      </div>
+      <nav class="nav-tabs">
+        <button class="tab-btn active">🎮 Game & AI</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="eyebrow"><span class="dot"></span> MLN122 · 5.2.3</div>
+      <h1>Đoàn kết quốc tế<br><span class="accent-text">Học bằng cách chơi.</span></h1>
+      <p class="lead">Đoán hình – thi đấu 10 câu – tích điểm theo tốc độ. Hoặc luyện tập với AI trước khi vào phòng.</p>
+      <div class="hero-stats">
+        <div><b>10</b><span>Câu hỏi</span></div>
+        <div><b>20s</b><span>Mỗi câu</span></div>
+        <div><b>100</b><span>Điểm tối đa</span></div>
+      </div>
+    </section>
+
+    <section class="quick-actions" aria-label="Chọn hoạt động">
+      <button class="action-card action-host" id="quickHost" type="button">
+        <span class="action-icon">＋</span><span class="action-tag">QUẢN TRÒ</span>
+        <strong>Tạo phòng</strong>
+        <p>Tạo mã phòng và điều khiển 10 câu hỏi.</p>
+        <span class="action-link">Bắt đầu →</span>
+      </button>
+      <button class="action-card action-join" id="quickJoin" type="button">
+        <span class="action-icon">↗</span><span class="action-tag">NGƯỜI CHƠI</span>
+        <strong>Tham gia phòng</strong>
+        <p>Nhập mã phòng để thi đấu cùng mọi người.</p>
+        <span class="action-link">Vào phòng →</span>
+      </button>
+      <button class="action-card action-ai" id="quickAI" type="button">
+        <span class="action-icon">✦</span><span class="action-tag">AI TUTOR</span>
+        <strong>Ôn luyện với AI</strong>
+        <p>Luyện câu hỏi lý thuyết trước khi thi đấu.</p>
+        <span class="action-link">Luyện tập →</span>
+      </button>
+    </section>
+
+    <div class="surface">
+      <section id="game" class="tab-panel active">
+        <div class="section-head">
+          <div class="kicker">Game ôn tập</div>
+          <h2>Ôn tập</h2>
+        </div>
+        
+        <div class="game-shell">
+          <div class="game-mode-tabs" id="gameModeSelector">
+            <button class="game-mode-btn active" data-game-mode="roomMode">🎮 Chơi đuổi hình bắt chữ</button>
+            <button class="game-mode-btn" data-game-mode="practiceMode">🧠 Ôn luyện lý thuyết với AI</button>
+          </div>
+
+          <div class="game-mode-panel show" id="roomMode">
+            <button class="game-btn alt mode-back" type="button">← Chọn chế độ khác</button>
+            <div class="role-screen" id="roleScreen">
+              <div class="role-card host-card">
+                <div class="role-icon">🎮</div>
+                <h3>Bạn là Quản Trò?</h3>
+                <p>Tạo phòng mới, hiển thị mã phòng và điều khiển game ôn tập.</p>
+                <button class="role-select" id="chooseHost">Chọn Quản Trò</button>
+                <div class="role-form" id="hostForm">
+                  <input id="hostRoomName" class="room-input" placeholder="Tên phòng" maxlength="24" />
+                  <button id="createRoom" class="game-btn">Tạo phòng mới</button>
+                </div>
+              </div>
+              <div class="role-card player-card">
+                <div class="role-icon">👥</div>
+                <h3>Bạn là Người Chơi?</h3>
+                <p>Nhập mã phòng từ màn hình của quản trò để tham gia.</p>
+                <button class="role-select amber" id="choosePlayer">Chọn Người Chơi</button>
+                <div class="role-form" id="playerForm">
+                  <input id="roomInput" class="room-input" placeholder="Nhập mã phòng" maxlength="5" />
+                  <input id="playerName" class="room-input" placeholder="Tên bạn" maxlength="18" />
+                  <button id="joinRoom" class="game-btn amber-btn">Tham gia ngay</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="room-lobby" id="roomLobby">
+              <div class="room-card lobby-main">
+                <div>
+                  <span class="badge hot" id="roleBadge">Quản trò</span>
+                  <h3 id="lobbyTitle" style="margin: 16px 0 8px;">Phòng ôn tập</h3>
+                  <p class="game-note" id="lobbyDesc">Chia sẻ mã phòng cho người chơi. Khi đủ người, quản trò bấm “Bắt đầu game”.</p>
+                </div>
+                <div class="big-room-code">
+                  <span>Mã phòng</span>
+                  <b id="roomCode">-----</b>
+                </div>
+                <div class="room-actions">
+                  <button id="startGameLobby" class="game-btn good">Bắt đầu game</button>
+                </div>
+              </div>
+              <div class="room-card">
+                <h3 style="margin-bottom: 16px;">Người chơi trong phòng</h3>
+                <div class="player-list" id="playerList"></div>
+              </div>
+            </div>
+
+            <div class="game-stage" id="gameStage">
+              <div class="game-card game-main-card" id="gameMainCard">
+                <div class="confetti" id="confetti"></div>
+                <div class="game-top">
+                  <div style="display:flex;gap:8px;flex-wrap:wrap">
+                    <span class="badge hot" id="roundBadge">Câu 1/10</span>
+                    <span class="badge">Điểm câu này: <b id="currentPoint" style="margin-left: 4px; color: var(--gold);">100</b></span>
+                  </div>
+                  <div class="timer-ring" id="timerRing"><span id="timerText">30s</span></div>
+                </div>
+
+                <div class="puzzle-frame">
+                  <div class="puzzle-title">
+                    <span class="badge" id="categoryBadge">Lý thuyết</span>
+                    <span class="badge">Đuổi hình bắt chữ</span>
+                  </div>
+                  <img class="puzzle-img" id="puzzleImage" src="" alt="Ảnh câu hỏi" />
+                  <div class="puzzle-art" id="puzzleArt">🏭 ➜ 🏢</div>
+                </div>
+
+                <div class="puzzle-question" id="puzzleQuestion">Câu hỏi sẽ hiện ở đây.</div>
+                <div class="hint-box" id="hintBox">Gợi ý sẽ hiện ở đây.</div>
+                
+                <div class="reveal-word" id="answerBoxes" aria-label="Ô chữ đáp án"></div>
+                
+                <div class="answer-row compact">
+                  <input id="answerInput" class="game-input" placeholder="Nhập đáp án..." autocomplete="off" />
+                  <button id="submitAnswer" class="game-btn good">Trả lời</button>
+                </div>
+                <div class="answer-state" id="answerState"></div>
+              </div>
+
+              <div class="score-panel host-side" id="hostSidePanel">
+                <div class="game-card">
+                  <h3 style="margin-bottom: 16px;">Điều khiển quản trò</h3>
+                  <div class="host-status-box">
+                    <b id="hostProgressText">Đang chờ bắt đầu</b>
+                    <p id="statusText">Tạo phòng rồi bấm “Bắt đầu game”.</p>
+                  </div>
+                  <div class="room-actions">
+                    <button id="startGame" class="game-btn">Bắt đầu game</button>
+                    <button id="resetGame" class="game-btn alt">Chơi lại</button>
+                  </div>
+                </div>
+                <div class="game-card" style="flex-grow: 1;">
+                  <h3 style="margin-bottom: 16px;">Bảng điểm hiện tại</h3>
+                  <div class="leaderboard" id="leaderboard"></div>
+                </div>
+              </div>
+
+              <div class="game-card round-summary-card" id="roundSummaryCard">
+                <h3 id="roundSummaryTitle" style="margin-bottom: 16px;">Bảng điểm hiện tại</h3>
+                <div class="leaderboard" id="roundLeaderboard"></div>
+                <p class="summary-note" id="roundSummaryNote" style="margin-top: 24px; color: var(--text-secondary); text-align: center;">Đang chờ chuyển sang câu tiếp theo...</p>
+              </div>
+
+              <div class="game-card final-summary-card" id="finalLeaderboardCard">
+                <div class="final-title">
+                  <div>
+                    <h3 style="font-size: 28px; margin-bottom: 8px;">VINH DANH TOP 3</h3>
+                    <p style="color: var(--text-secondary);">Hoàn thành đủ 10 câu — 3 người chơi có tổng điểm cao nhất sẽ được vinh danh.</p>
+                  </div>
+                  <span class="badge hot">Top 3</span>
+                </div>
+                <div class="leaderboard big" id="finalLeaderboard"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="game-mode-panel" id="practiceMode">
+            <button class="game-btn alt mode-back" type="button">← Chọn chế độ khác</button>
+            <div class="practice-grid" id="practiceSetup">
+              <div class="practice-card intro">
+                <span class="badge hot" style="margin-bottom: 16px;">AI Tutor</span>
+                <h3 style="font-size: 20px; margin-bottom: 12px;">Ôn tập với AI từ học liệu</h3>
+                <p style="color: var(--text-secondary); font-size: 14px;">Người học chỉ cần chọn số câu muốn luyện và dạng câu hỏi phù hợp.</p>
+
+                <div class="ai-source-box">
+                  <div class="ai-form-row">
+                    <div class="ai-field">
+                      <label for="aiQuestionCount">Số câu muốn luyện tập</label>
+                      <input id="aiQuestionCount" type="number" min="1" max="50" value="10" />
+                    </div>
+                    <div class="ai-field">
+                      <label for="questionType">Dạng câu hỏi</label>
+                      <select id="questionType">
+                        <option value="multiple_choice">Multiple choice</option>
+                        <option value="fill_blank">Điền vào chỗ trống</option>
+                        <option value="mixed">Kết hợp cả hai</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="room-actions" style="margin-top: 16px; justify-content: flex-start;">
+                    <button id="startPractice" class="game-btn good">Bắt đầu</button>
+                    <button id="useDefaultPractice" class="game-btn alt">Dùng bộ câu hỏi dự phòng</button>
+                  </div>
+                  <p class="game-note" id="practiceGenerateStatus" style="margin-top: 12px; font-size: 13px; color: var(--text-secondary);">Sẵn sàng tạo câu hỏi.</p>
+                </div>
+              </div>
+              <div class="practice-card">
+                <h3 style="font-size: 20px; margin-bottom: 12px;">Cách hoạt động</h3>
+                <ul style="color: var(--text-secondary); font-size: 14px; padding-left: 20px; line-height: 1.8;">
+                  <li>Nhập tối đa <b>50 câu</b> cho một lần ôn tập.</li>
+                  <li>Chọn <b>Multiple choice</b>, <b>Điền vào chỗ trống</b> hoặc <b>Kết hợp</b>.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="practice-quiz" id="practiceQuiz">
+              <div class="practice-main">
+                <div class="game-top">
+                  <div style="display:flex;gap:8px;flex-wrap:wrap">
+                    <span class="badge hot" id="practiceCounter">Câu 1/10</span>
+                    <span class="badge">Điểm: <b id="practiceScore" style="margin-left: 4px; color: var(--gold);">0</b></span>
+                  </div>
+                  <span class="badge" id="practiceTopic">Lý thuyết</span>
+                </div>
+                
+                <div class="practice-progress"><span id="practiceProgress" style="width: 0%;"></span></div>
+                
+                <h3 id="practiceQuestion" style="font-size: 20px; margin-bottom: 24px;">Câu hỏi sẽ hiện ở đây</h3>
+                
+                <div class="practice-options" id="practiceOptions"></div>
+                
+                <div class="ai-explain" id="aiExplain">
+                  <b>AI giải thích</b>
+                  <p>Chọn một đáp án để xem giải thích.</p>
+                </div>
+                
+                <div class="room-actions" style="margin-top: 32px;">
+                  <button id="prevPractice" class="game-btn alt">Câu trước</button>
+                  <button id="nextPractice" class="game-btn">Câu tiếp theo</button>
+                  <button id="restartPractice" class="game-btn alt">Ôn lại</button>
+                </div>
+              </div>
+              
+              <div class="game-card final-practice-card" id="practiceFinalCard" style="display:none; margin-top: 24px; text-align: center;">
+                <h3 style="margin-bottom: 16px;">Kết quả cuối</h3>
+                <div class="score-big" id="practiceResult" style="font-size: 48px; font-weight: 900; color: var(--gold); margin-bottom: 12px;">0/0</div>
+                <p class="game-note" id="practiceStatus" style="color: var(--text-secondary);">Hoàn thành bài ôn tập.</p>
+              </div>
+              <div class="feed" id="practiceFeed" style="display:none"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+  <script type="module">
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import { getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot, serverTimestamp, arrayUnion } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBgasCH5TtnnaWzvofHHgR9NP6lczAPU5M",
+      authDomain: "mln122-63e0c.firebaseapp.com",
+      projectId: "mln122-63e0c",
+      storageBucket: "mln122-63e0c.firebasestorage.app",
+      messagingSenderId: "75579579116",
+      appId: "1:75579579116:web:f4f63d1af921119fe663c9",
+      measurementId: "G-TB20Y6DB9P"
+    };
+
+    const firebaseApp = initializeApp(firebaseConfig);
+    const db = getFirestore(firebaseApp);
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const panels = document.querySelectorAll('.tab-panel');
+    function openTab(id){
+      tabButtons.forEach(b => b.classList.toggle('active', b.dataset.tab === id));
+      panels.forEach(p => p.classList.toggle('active', p.id === id));
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+    window.__mlnOpenTab = openTab;
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        openTab(btn.dataset.tab);
+      }, true);
+    });
+    document.querySelectorAll('[data-go]').forEach(btn => btn.addEventListener('click', () => openTab(btn.dataset.go)));
+
+    document.querySelector('.brand')?.addEventListener('keydown', e => {
+      if(e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        openTab('home');
+      }
+    });
+
+    const subButtons = document.querySelectorAll('.sub-btn');
+    subButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const parent = btn.closest('.surface');
+        parent.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
+        parent.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        parent.querySelector('#' + btn.dataset.sub).classList.add('active');
+      });
+    });
+
+    document.querySelectorAll('.acc button').forEach(btn => {
+      btn.addEventListener('click', () => btn.parentElement.classList.toggle('open'));
+    });
+
+    document.querySelectorAll('.highlight').forEach(el => {
+      el.addEventListener('click', () => {
+        const target = document.getElementById(el.dataset.img);
+        if (!target) return;
+        const isOpen = target.classList.toggle('show');
+        if (isOpen) target.scrollIntoView({behavior:'smooth', block:'nearest'});
+      });
+    });
+    document.querySelectorAll('.close-img').forEach(btn => btn.addEventListener('click', () => btn.closest('.inline-image').classList.remove('show')));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.inline-image').forEach(img => img.classList.remove('show')); });
+
+
+    const puzzles = [
+      {image:'Images/cau_01.png', art:'???? ????', answer:'??O??N K???T', category:'??i???m chung', question:'H??nh ???nh g???i ra nguy??n t???c ph???i t??m nh???ng ??i???m t????ng ?????ng v??? m???c ti??u v?? l???i ??ch gi???a c??c l???c l?????ng l?? g???', hint:'Hai ti???ng, b???t ?????u b???ng ?????o??n???.'},
+      {image:'Images/cau_02.png', art:'?????? ??????', answer:'C?? L?? C?? T??NH', category:'C??ch th???c', question:'??o??n k???t v?? th???ng nh???t trong phong tr??o c???ng s???n v?? c??ng nh??n qu???c t??? ph???i ???????c th???c hi???n nh?? th??? n??o?', hint:'M???t c???m 5 ti???ng, th??? hi???n s??? k???t h???p gi???a nguy??n t???c v?? t??nh c???m.'},
+      {image:'Images/cau_03.png', art:'???? ????', answer:'M???C TI??U', category:'??i???m chung', question:'Khi t??m ??i???m t????ng ?????ng gi???a c??c l???c l?????ng, c???n xem x??t s??? gi???ng nhau v??? ??i???u g?? tr?????c ti??n?', hint:'Hai ti???ng, li??n quan ?????n ??i???u mu???n ?????t ???????c.'},
+      {image:'Images/cau_04.png', art:'???? ??????', answer:'B??NH ?????NG', category:'C??c d??n t???c', question:'Gi???a c??c d??n t???c tr??n th??? gi???i, Vi???t Nam ????? cao quy???n n??o b??n c???nh ?????c l???p v?? t??? do?', hint:'Hai ti???ng, n??i v??? s??? ngang b???ng v??? quy???n l???i v?? ?????a v???.'},
+      {image:'Images/cau_05.png', art:'???? ???????', answer:'T??? QUY???T', category:'Ch??? quy???n', question:'Vi???t Nam t??n tr???ng ?????c l???p, ch??? quy???n, th???ng nh???t, to??n v???n l??nh th??? v?? quy???n n??o c???a c??c qu???c gia?', hint:'Hai ti???ng, n??i v??? quy???n t??? m??nh quy???t ?????nh con ???????ng c???a qu???c gia.'},
+      {image:'Images/cau_06.png', art:'??????? ???????', answer:'CH??? QUY???N', category:'Ch??? quy???n', question:'Vi???t Nam t??n tr???ng ?????c l???p, quy???n g?? c??ng v???i th???ng nh???t v?? to??n v???n l??nh th??? c???a c??c qu???c gia?', hint:'Hai ti???ng, n??i v??? quy???n t???i cao c???a m???t qu???c gia ?????i v???i l??nh th???.'},
+      {image:'Images/cau_07.png', art:'???? ????', answer:'N???I L???C', category:'S???c m???nh b??n trong', question:'Ngu???n l???c b??n ngo??i ???????c tranh th??? nh???m t??ng th??m y???u t??? n??o, trong ???? y???u t??? n??y gi??? vai tr?? quy???t ?????nh?', hint:'Hai ti???ng, ch??? s???c m???nh b??n trong c???a ?????t n?????c.'},
+      {image:'Images/cau_08.png', art:'???? ????', answer:'TH???C L???C', category:'Ngo???i giao', question:'Trong h??nh ???nh ???... l?? c??i chi??ng, ngo???i giao l?? c??i ti???ng???, y???u t??? n??o ph???i c?? ????? ngo???i giao ph??t huy hi???u qu????', hint:'Hai ti???ng, li??n quan ?????n s???c m???nh th???c t??? c???a ?????t n?????c.'},
+      {image:'Images/cau_09.png', art:'???? ????', answer:'NGO???I GIAO', category:'Ngo???i giao', question:'Trong h??nh ???nh ???th???c l???c l?? c??i chi??ng, ... l?? c??i ti???ng???, t??? c??n thi???u l?? g???', hint:'Hai ti???ng, li??n quan ?????n quan h??? v?? ho???t ?????ng ?????i ngo???i.'},
+      {image:'Images/cau_10.png', art:'???? ????', answer:'L???I ??CH', category:'??i???m chung', question:'Ngo??i m???c ti??u, ??o??n k???t qu???c t??? y??u c???u t??m ra ??i???m t????ng ?????ng v??? ??i???u g?? gi???a c??c l???c l?????ng?', hint:'Hai ti???ng, li??n quan ?????n quy???n l???i c???a c??c l???c l?????ng.'}
+    ];
+
+    let room = null;
+    let roomData = null;
+    let players = [];
+    let score = 0;
+    let round = 0;
+    let timeLeft = 60;
+    let timer = null;
+    let reviewTimer = null;
+    let playing = false;
+    let currentRole = null;
+    let currentPhase = 'idle';
+    const QUESTION_TIME = 20;
+    const REVIEW_TIME = 4;
+    let localPlayerId = sessionStorage.getItem('mlnPlayerId') || ('p_' + Math.random().toString(36).slice(2,10));
+    let localPlayerName = '';
+    let unsubscribeRoom = null;
+    let syncingRemote = false;
+    sessionStorage.setItem('mlnPlayerId', localPlayerId);
+
+    const $ = id => document.getElementById(id);
+    const normalizeAnswer = str => (str || '')
+      .toUpperCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g,'')
+      .replace(/??/g,'D')
+      .replace(/[^A-Z0-9]/g,'');
+
+
+    const theoryQuestions = [
+      {topic:'??i???m chung', q:'Mu???n th???c hi???n ??o??n k???t qu???c t???, tr?????c h???t c???n t??m ra ??i???u g???', options:['??i???m t????ng ?????ng v??? m???c ti??u v?? l???i ??ch','S??? gi???ng nhau v??? m???i m???t','M???t th??? tr?????ng chung','M???t c?? ch??? qu??n s??? chung'], correct:0, explain:'Nguy??n t???c ??o??n k???t qu???c t??? y??u c???u t??m ra nh???ng ??i???m t????ng ?????ng v??? m???c ti??u v?? l???i ??ch gi???a c??c l???c l?????ng.'},
+      {topic:'Phong tr??o c???ng s???n', q:'?????i v???i phong tr??o c???ng s???n v?? c??ng nh??n qu???c t???, ng???n c??? n??o ???????c nh???n m???nh?', options:['?????c l???p d??n t???c g???n li???n v???i ch??? ngh??a x?? h???i','T??ch r???i ?????c l???p d??n t???c kh???i ch??? ngh??a x?? h???i','Ch??? ??u ti??n l???i ??ch kinh t???','Kh??ng c???n th???ng nh???t'], correct:0, explain:'N???i dung nh???n m???nh ?????c l???p d??n t???c g???n li???n v???i ch??? ngh??a x?? h???i.'},
+      {topic:'C??ch th???c ??o??n k???t', q:'??o??n k???t th???ng nh???t trong phong tr??o c???ng s???n v?? c??ng nh??n qu???c t??? ph???i ???????c th???c hi???n nh?? th??? n??o?', options:['C?? l??, c?? t??nh','Ch??? d???a v??o kinh t???','Ch??? d???a v??o qu??n s???','Kh??ng c???n nguy??n t???c'], correct:0, explain:'??o??n k???t th???ng nh???t ph???i ???????c th???c hi???n tr??n tinh th???n ???c?? l??, c?? t??nh???.'},
+      {topic:'C??c d??n t???c', q:'Vi???t Nam gi????ng cao ng???n c??? n??o gi???a c??c d??n t???c tr??n th??? gi???i?', options:['?????c l???p, t??? do v?? quy???n b??nh ?????ng','?????c quy???n v?? l???i nhu???n','T??? c?? l???p v?? ????ng c???a','??u ti??n m???t d??n t???c duy nh???t'], correct:0, explain:'N???i dung n??u ?????c l???p, t??? do v?? quy???n b??nh ?????ng gi???a c??c d??n t???c.'},
+      {topic:'Ch??? quy???n', q:'Vi???t Nam t??n tr???ng quy???n n??o c???a c??c qu???c gia trong quan h??? qu???c t????', options:['Quy???n t??? quy???t','Quy???n can thi???p','Quy???n ??p ?????t','Quy???n ph??? nh???n ch??? quy???n'], correct:0, explain:'Vi???t Nam t??n tr???ng ?????c l???p, ch??? quy???n, th???ng nh???t, to??n v???n l??nh th??? v?? quy???n t??? quy???t c???a c??c qu???c gia.'},
+      {topic:'N???i l???c', q:'M???c ????ch c???a vi???c tranh th??? s??? gi??p ????? b??n ngo??i l?? g???', options:['T??ng th??m n???i l???c','Thay th??? ho??n to??n n???i l???c','T??? b??? ?????c l???p t??? ch???','Ph??? thu???c v??o b??n ngo??i'], correct:0, explain:'Ngu???n l???c b??n ngo??i ???????c tranh th??? ????? t??ng th??m n???i l???c; n???i l???c gi??? vai tr?? quy???t ?????nh.'},
+      {topic:'T??? l???c', q:'Kh???u hi???u n??o th??? hi???n y??u c???u d???a v??o s???c m??nh l?? ch??nh?', options:['T??? l???c c??nh sinh','Ngo???i giao l?? quy???t ?????nh','Ph??? thu???c l???n nhau','??o??n k???t tuy???t ?????i'], correct:0, explain:'???T??? l???c c??nh sinh, d???a v??o s???c m??nh l?? ch??nh??? nh???n m???nh vai tr?? c???a n???i l???c.'},
+      {topic:'Ngo???i giao', q:'C??u ???th???c l???c l?? c??i chi??ng, ngo???i giao l?? c??i ti???ng??? nh???n m???nh ??i???u g???', options:['Ph???i c?? th???c l???c th?? ngo???i giao m???i ph??t huy hi???u qu???','Ngo???i giao thay th??? th???c l???c','Ch??? c???n ngo???i giao','Ngo???i giao kh??ng c?? vai tr??'], correct:0, explain:'H??nh ???nh n??y nh???n m???nh th???c l???c l?? n???n t???ng ????? ho???t ?????ng ngo???i giao ph??t huy hi???u qu???.'},
+      {topic:'Quan h??? gi???a c??c ?????ng', q:'C??c ?????ng c???ng s???n d?? l???n hay nh??? c???n gi??? quan h??? nh?? th??? n??o?', options:['?????c l???p, b??nh ?????ng v?? ??o??n k???t gi??p ????? l???n nhau','?????ng l???n quy???t ?????nh m???i vi???c','?????ng nh??? ph???i ph??? thu???c','Kh??ng c???n ??o??n k???t'], correct:0, explain:'C??c ?????ng ph???i ?????c l???p, b??nh ?????ng v?? ??o??n k???t gi??p ????? l???n nhau.'},
+      {topic:'M???c ti??u', q:'??o??n k???t qu???c t??? c???n k???t h???p s???c m???nh b??n ngo??i v???i y???u t??? n??o?', options:['S???c m???nh n???i l???c','S??? ph??? thu???c b??n ngo??i','Vi???c t??? b??? t??? ch???','S??? c?? l???p qu???c t???'], correct:0, explain:'??o??n k???t qu???c t??? nh???m tranh th??? ngu???n l???c b??n ngo??i ????? t??ng th??m n???i l???c, trong ???? n???i l???c l?? nh??n t??? quy???t ?????nh.'}
+    ];
+
+    let practiceCount = 10;
+    let practiceType = 'multiple_choice';
+    let practiceSet = [];
+    let practiceIndex = 0;
+    let practiceScoreValue = 0;
+    let practiceAnswered = false;
+
+    function shuffleArray(arr){
+      const a = [...arr];
+      for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+      return a;
+    }
+    function switchGameMode(id){
+      const selector = $('gameModeSelector');
+      if(selector) selector.style.display = 'none';
+      document.querySelectorAll('.game-mode-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.gameMode === id));
+      document.querySelectorAll('.game-mode-panel').forEach(panel => panel.classList.toggle('show', panel.id === id));
+      if(id === 'practiceMode') clearInterval(timer);
+    }
+    function backToGameModeSelector(){
+      clearInterval(timer);
+      playing = false;
+      document.querySelectorAll('.game-mode-panel').forEach(panel => panel.classList.remove('show'));
+      const selector = $('gameModeSelector');
+      if(selector) selector.style.display = 'flex';
+      document.querySelectorAll('.game-mode-btn').forEach(btn => btn.classList.remove('active'));
+    }
+    function getPracticeSettings(){
+      const countInput = $('aiQuestionCount');
+      const typeInput = $('questionType');
+      const rawCount = Number(countInput ? countInput.value : 10);
+      practiceCount = Math.max(1, Math.min(50, Number.isFinite(rawCount) ? rawCount : 10));
+      if(countInput) countInput.value = practiceCount;
+      practiceType = typeInput ? typeInput.value : 'multiple_choice';
+      return { count: practiceCount, questionType: practiceType };
+    }
+    function setPracticeCount(count){
+      practiceCount = Math.max(1, Math.min(50, Number(count) || 10));
+      const countInput = $('aiQuestionCount');
+      if(countInput) countInput.value = practiceCount;
+      document.querySelectorAll('.count-btn').forEach(btn => btn.classList.toggle('active', Number(btn.dataset.count) === practiceCount));
+    }
+    function normalizePracticeQuestion(q, idx){
+      const type = q.type || q.questionType || (q.options ? 'multiple_choice' : 'fill_blank');
+      const base = {
+        type: type === 'fill_blank' ? 'fill_blank' : 'multiple_choice',
+        topic: q.topic || 'AI Tutor',
+        q: q.q || q.question || `C??u h???i ${idx+1}`,
+        explain: q.explain || q.explanation || 'AI ch??a t???o gi???i th??ch.'
+      };
+      if(base.type === 'fill_blank'){
+        const answer = String(q.answer || q.correctAnswer || q.correct || '').trim();
+        const accepted = Array.isArray(q.acceptedAnswers) ? q.acceptedAnswers.map(x => String(x).trim()).filter(Boolean) : [];
+        return {...base, answer, acceptedAnswers: accepted.length ? accepted : [answer]};
+      }
+      return {
+        ...base,
+        options: q.options || [],
+        correct: Number.isInteger(q.correct) ? q.correct : Number(q.answerIndex || 0)
+      };
+    }
+    function validPracticeQuestion(q){
+      if(q.type === 'fill_blank') return Boolean(q.answer || (q.acceptedAnswers && q.acceptedAnswers.length));
+      return Array.isArray(q.options) && q.options.length === 4 && q.correct >= 0 && q.correct <= 3;
+    }
+    function buildFallbackSet(count, type){
+      let bank = shuffleArray(theoryQuestions);
+      while(bank.length < count) bank = bank.concat(shuffleArray(theoryQuestions));
+      let chosen = bank.slice(0, count).map((q, idx) => normalizePracticeQuestion(q, idx));
+      if(type === 'fill_blank'){
+        chosen = chosen.map((q, idx) => {
+          const correctText = q.options && q.options[q.correct] ? q.options[q.correct] : '?????c quy???n';
+          return {type:'fill_blank', topic:q.topic, q:q.q.replace('?', ' ??? ??i???n kh??i ni???m ho???c ?? ch??nh ph?? h???p:'), answer:correctText, acceptedAnswers:[correctText], explain:q.explain};
+        });
+      }
+      return chosen;
+    }
+    async function readSourceFile(file){
+      if(!file) return '';
+      const status = $('sourceFileStatus');
+      const allowed = ['text/plain','text/markdown','text/html','text/csv'];
+      const extOk = /\.(txt|md|html|csv)$/i.test(file.name);
+      if(!allowed.includes(file.type) && !extOk){
+        if(status) status.textContent = 'File n??y ch??a ?????c tr???c ti???p ???????c. H??y copy n???i dung trong PDF/DOCX/PPTX r???i d??n v??o ?? ngu???n h???c li???u.';
+        return '';
+      }
+      const text = await file.text();
+      if(status) status.textContent = `???? ?????c file: ${file.name}`;
+      return text;
+    }
+    async function startPractice(useAI = true){
+      const status = $('practiceGenerateStatus');
+      const startBtn = $('startPractice');
+      const settings = getPracticeSettings();
+      if(status) status.textContent = useAI ? `AI ??ang t???o ${settings.count} c??u h???i ...` : `??ang t???o ${settings.count} c??u t??? b??? d??? ph??ng...`;
+      if(startBtn) startBtn.disabled = true;
+
+      let generated = null;
+      if(useAI){
+        try{
+          const res = await fetch('/api/generate-quiz', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({count: settings.count, questionType: settings.questionType})
+          });
+          const data = await res.json();
+          if(!res.ok) throw new Error(data.error || 'Kh??ng g???i ???????c AI');
+          if(!Array.isArray(data.questions) || !data.questions.length) throw new Error('AI kh??ng tr??? v??? c??u h???i h???p l???');
+          generated = data.questions.map(normalizePracticeQuestion).filter(validPracticeQuestion);
+          if(status) status.textContent = 'AI ???? t???o c??u h???i d???a tr??n h???c li???u .';
+        }catch(err){
+          console.warn('AI quiz fallback:', err);
+          generated = buildFallbackSet(settings.count, settings.questionType);
+          if(status) status.textContent = 'Kh??ng g???i ???????c AI, ??ang d??ng b??? c??u h???i d??? ph??ng.';
+        }
+      } else {
+        generated = buildFallbackSet(settings.count, settings.questionType);
+      }
+
+      practiceSet = generated.slice(0, settings.count);
+      practiceIndex = 0;
+      practiceScoreValue = 0;
+      practiceAnswered = false;
+      $('practiceSetup').style.display = 'none';
+      $('practiceQuiz').classList.add('show');
+      if($('practiceFeed')) $('practiceFeed').innerHTML = '';
+      $('practiceQuiz').classList.remove('finished');
+      $('practiceScore').textContent = '0';
+      if(startBtn) startBtn.disabled = false;
+      renderPracticeQuestion();
+    }
+    function renderPracticeQuestion(){
+      const item = practiceSet[practiceIndex];
+      practiceAnswered = false;
+      $('practiceCounter').textContent = `C??u ${practiceIndex+1}/${practiceSet.length}`;
+      $('practiceTopic').textContent = item.type === 'fill_blank' ? `${item.topic} ?? ??i???n ch??? tr???ng` : `${item.topic} ?? Multiple choice`;
+      $('practiceQuestion').textContent = item.q;
+      $('practiceQuiz').classList.remove('finished');
+      const prevBtn = $('prevPractice');
+      if(prevBtn) prevBtn.disabled = practiceIndex === 0;
+      $('practiceStatus').textContent = item.type === 'fill_blank' ? 'Nh???p c??u tr??? l???i r???i b???m ki???m tra.' : 'Ch???n ????p ??n ????? ???????c ch???m v?? gi???i th??ch.';
+      $('practiceProgress').style.width = `${Math.round((practiceIndex / practiceSet.length) * 100)}%`;
+      $('aiExplain').classList.remove('show');
+      $('aiExplain').innerHTML = '<b>AI gi???i th??ch</b><p>Tr??? l???i c??u h???i ????? xem gi???i th??ch.</p>';
+      const box = $('practiceOptions');
+      box.innerHTML = '';
+      if(item.type === 'fill_blank'){
+        const wrap = document.createElement('div');
+        wrap.className = 'blank-answer-box';
+        wrap.innerHTML = `<input id="blankAnswerInput" placeholder="Nh???p c??u tr??? l???i c???a b???n..." /><button class="game-btn good" id="checkBlankAnswer">Ki???m tra</button>`;
+        box.appendChild(wrap);
+        setTimeout(() => {
+          const input = $('blankAnswerInput');
+          const btn = $('checkBlankAnswer');
+          if(input) input.addEventListener('keydown', e => { if(e.key === 'Enter') answerBlankPractice(input.value); });
+          if(btn) btn.addEventListener('click', () => answerBlankPractice(input ? input.value : ''));
+        }, 0);
+        return;
+      }
+      item.options.forEach((option, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.textContent = String.fromCharCode(65+i) + '. ' + option;
+        btn.addEventListener('click', () => answerPractice(i));
+        box.appendChild(btn);
+      });
+    }
+    function cleanExplainText(text){
+      return String(text || '')
+        .replace(/^\s*????ng\s+v??\s*/i, '')
+        .replace(/^\s*????ng,?\s*/i, '')
+        .trim();
+    }
+    function cleanAnswer(text){
+      return String(text || '').toLowerCase().normalize('NFD').replace(/[??-??]/g,'').replace(/[^a-z0-9\s]/g,'').replace(/\s+/g,' ').trim();
+    }
+    function answerBlankPractice(value){
+      if(practiceAnswered) return;
+      practiceAnswered = true;
+      const item = practiceSet[practiceIndex];
+      const accepted = (item.acceptedAnswers && item.acceptedAnswers.length ? item.acceptedAnswers : [item.answer]).map(cleanAnswer);
+      const user = cleanAnswer(value);
+      const ok = accepted.some(ans => ans && (user === ans || user.includes(ans) || ans.includes(user)));
+      if(ok){
+        practiceScoreValue++;
+        $('practiceScore').textContent = practiceScoreValue;
+        $('practiceStatus').textContent = 'Ch??nh x??c. Ti???p t???c c??u sau.';
+      } else {
+        $('practiceStatus').textContent = 'Ch??a ????ng. ?????c gi???i th??ch r???i sang c??u ti???p theo.';
+      }
+      const input = $('blankAnswerInput');
+      const btn = $('checkBlankAnswer');
+      if(input) input.disabled = true;
+      if(btn) btn.disabled = true;
+      const correctText = item.answer || (item.acceptedAnswers && item.acceptedAnswers[0]) || '';
+      const explainText = cleanExplainText(item.explain);
+      $('aiExplain').innerHTML = `<b>${ok ? 'Gi???i th??ch: B???n tr??? l???i ????ng' : 'Gi???i th??ch c??u sai'}</b><p>${explainText}</p><p><b>????p ??n g???i ??:</b> ${correctText}</p>`;
+      $('aiExplain').classList.add('show');
+    }
+    function answerPractice(choice){
+      if(practiceAnswered) return;
+      practiceAnswered = true;
+      const item = practiceSet[practiceIndex];
+      const buttons = [...document.querySelectorAll('#practiceOptions .option-btn')];
+      buttons.forEach((btn,i)=>{
+        btn.disabled = true;
+        if(i === item.correct) btn.classList.add('correct');
+        if(i === choice && choice !== item.correct) btn.classList.add('wrong');
+      });
+      const ok = choice === item.correct;
+      if(ok){
+        practiceScoreValue++;
+        $('practiceScore').textContent = practiceScoreValue;
+        $('practiceStatus').textContent = 'Ch??nh x??c. Ti???p t???c c??u sau.';
+      } else {
+        $('practiceStatus').textContent = 'Ch??a ????ng. ?????c gi???i th??ch r???i sang c??u ti???p theo.';
+      }
+      const correctText = item.options[item.correct];
+      const explainText = cleanExplainText(item.explain);
+      $('aiExplain').innerHTML = `<b>${ok ? 'Gi???i th??ch: B???n ch???n ????ng' : 'Gi???i th??ch c??u sai'}</b><p>${explainText}</p><p><b>????p ??n ????ng:</b> ${correctText}</p>`;
+      $('aiExplain').classList.add('show');
+    }
+    function prevPractice(){
+      if(!practiceSet.length || practiceIndex <= 0) return;
+      practiceIndex--;
+      renderPracticeQuestion();
+    }
+    function nextPractice(){
+      if(!practiceSet.length) return;
+      if(practiceIndex >= practiceSet.length - 1){
+        $('practiceProgress').style.width = '100%';
+        $('practiceQuestion').textContent = 'Ho??n th??nh b??i ??n t???p';
+        $('practiceOptions').innerHTML = '';
+        $('practiceQuiz').classList.add('finished');
+        $('practiceResult').textContent = `${practiceScoreValue}/${practiceSet.length}`;
+        $('aiExplain').innerHTML = `<b>K???t qu??? cu???i</b><p>B???n tr??? l???i ????ng ${practiceScoreValue}/${practiceSet.length} c??u.</p>`;
+        $('aiExplain').classList.add('show');
+        $('practiceStatus').textContent = `B???n tr??? l???i ????ng ${practiceScoreValue}/${practiceSet.length} c??u.`;
+        return;
+      }
+      practiceIndex++;
+      renderPracticeQuestion();
+    }
+    function restartPractice(){
+      $('practiceSetup').style.display = 'grid';
+      $('practiceQuiz').classList.remove('show');
+      $('practiceQuiz').classList.remove('finished');
+      practiceSet = [];
+      practiceIndex = 0;
+      practiceScoreValue = 0;
+    }
+
+    function roomRef(code = room){
+      return doc(db, 'mln_rooms', String(code));
+    }
+    function addFeed(){ }
+    async function addRoomFeed(){ }
+    function renderRemoteFeed(){ }
+    function getActivePlayers(list = players){
+      const active = (list || []).filter(p => (p.role || 'player') !== 'host' && (p.role || 'player') !== 'bot');
+      return active.length ? active : (list || []);
+    }
+    function getAnsweredMap(data = roomData){
+      return data && data.answeredPlayers ? data.answeredPlayers : {};
+    }
+    function playerHasAnswered(id = localPlayerId, data = roomData){
+      return !!getAnsweredMap(data)[id];
+    }
+    function setAnswerDisabled(disabled){
+      const input = $('answerInput');
+      const btn = $('submitAnswer');
+      if(input) input.disabled = disabled;
+      document.querySelectorAll('#answerBoxes .letter-input').forEach(el => {
+        if(!el.closest('.letter-box')?.classList.contains('revealed')) el.disabled = disabled;
+      });
+      if(btn) btn.disabled = disabled;
+    }
+    function sortedPlayers(list = players){
+      return [...(list || [])]
+        .filter(p => (p.role || 'player') !== 'host' && (p.role || 'player') !== 'bot')
+        .sort((a,b)=>b.score-a.score);
+    }
+    function updateStageLayout(){
+      const stage = $('gameStage');
+      if(!stage) return;
+      const questionMode = roomData?.status === 'playing' && (roomData?.phase || 'question') === 'question';
+      stage.classList.toggle('player-view', currentRole === 'player' && questionMode);
+      stage.classList.toggle('host-view', currentRole === 'host' && questionMode);
+      const hostSide = $('hostSidePanel');
+      if(hostSide) hostSide.style.display = currentRole === 'host' ? 'grid' : 'none';
+    }
+    function renderPlayers(){
+      const list = $('playerList');
+      if(list){
+        list.innerHTML = '';
+        const realPlayers = players.filter(p => (p.role || 'player') !== 'host' && (p.role || 'player') !== 'bot');
+        if(!realPlayers.length){
+          const empty = document.createElement('div');
+          empty.className = 'player';
+          empty.innerHTML = '<span>Ch??a c?? ng?????i ch??i tham gia</span><b>0</b>';
+          list.appendChild(empty);
+        }else{
+          realPlayers.forEach(p => {
+            const row = document.createElement('div');
+            row.className = 'player';
+            row.innerHTML = `<span>${p.name}</span><b>${p.score}</b>`;
+            list.appendChild(row);
+          });
+        }
+      }
+      renderLeaderboard();
+      renderRoundLeaderboard();
+      renderFinalLeaderboard();
+    }
+    function renderLeaderboard(){
+      const board = $('leaderboard');
+      if(!board) return;
+      board.innerHTML = '';
+      sortedPlayers(players).forEach((p,i)=>{
+        const row = document.createElement('div');
+        row.className = 'rank' + (p.me ? ' me' : '');
+        row.innerHTML = `<span>#${i+1} ${p.name}</span><span>${p.score}</span>`;
+        board.appendChild(row);
+      });
+    }
+    function renderRoundLeaderboard(){
+      const board = $('roundLeaderboard');
+      if(!board) return;
+      board.innerHTML = '';
+      const top = sortedPlayers(players).slice(0,5);
+      if(!top.length){
+        board.innerHTML = '<div class="rank"><span>Ch??a c?? d??? li???u</span><span>0</span></div>';
+        return;
+      }
+      top.forEach((p,i)=>{
+        const row = document.createElement('div');
+        row.className = 'rank' + (p.me ? ' me' : '');
+        row.innerHTML = `<span>#${i+1} ${p.name}</span><span>${p.score}</span>`;
+        board.appendChild(row);
+      });
+    }
+    function renderFinalLeaderboard(){
+      const board = $('finalLeaderboard');
+      if(!board) return;
+      board.innerHTML = '';
+      const ordered = sortedPlayers(players).slice(0,3);
+      if(!ordered.length){
+        board.innerHTML = '<div class="rank"><span>Ch??a c?? d??? li???u</span><span>0</span></div>';
+        return;
+      }
+      ordered.forEach((p,i)=>{
+        const row = document.createElement('div');
+        row.className = 'rank' + (p.me ? ' me' : '');
+        row.innerHTML = `<span>#${i+1} ${p.name}</span><span>${p.score}</span>`;
+        board.appendChild(row);
+      });
+    }
+    function setQuestionSummaryVisible(show, note = ''){
+      const card = $('roundSummaryCard');
+      if(!card) return;
+      card.classList.toggle('show', !!show);
+      $('roundSummaryTitle').textContent = `Top 5 sau c??u ${Math.min(round + 1, puzzles.length)}`;
+      if(note) $('roundSummaryNote').textContent = note;
+    }
+    function showFinalLeaderboard(show){
+      const stage = $('gameStage');
+      const card = $('finalLeaderboardCard');
+      if(stage) stage.classList.toggle('show-final', !!show);
+      if(card) card.classList.toggle('show', !!show);
+      renderFinalLeaderboard();
+    }
+    function updateHostProgress(){
+      const hostProgress = $('hostProgressText');
+      if(!hostProgress) return;
+      if(roomData?.status === 'waiting'){
+        hostProgress.textContent = '??ang ch??? b???t ?????u';
+        return;
+      }
+      if(roomData?.status === 'finished'){
+        hostProgress.textContent = '???? ho??n th??nh 10/10 c??u';
+        return;
+      }
+      const active = getActivePlayers(players);
+      const answeredCount = Object.keys(getAnsweredMap(roomData)).length;
+      hostProgress.textContent = `???? tr??? l???i: ${answeredCount}/${active.length || 0} ng?????i ch??i`;
+    }
+    function showRoleForm(role){
+      $('hostForm')?.classList.toggle('show', role === 'host');
+      $('playerForm')?.classList.toggle('show', role === 'player');
+    }
+    function showLobby(role){
+      $('roleScreen')?.classList.add('hidden');
+      $('roleScreen').style.display = 'none';
+      $('roomLobby')?.classList.add('show');
+      $('gameStage')?.classList.remove('show');
+      currentRole = role;
+      $('roleBadge').textContent = role === 'host' ? 'Qu???n tr??' : 'Ng?????i ch??i';
+      const startLobby = $('startGameLobby');
+      if(startLobby){
+        startLobby.style.display = role === 'host' ? 'inline-flex' : 'none';
+        startLobby.textContent = 'B???t ?????u game';
+      }
+      const startCardBtn = $('startGame');
+      if(startCardBtn) startCardBtn.style.display = role === 'host' ? 'inline-flex' : 'none';
+      const addBotBtn = $('addBot');
+      if(addBotBtn) addBotBtn.style.display = 'none';
+    }
+    function ensureRoom(){
+      if(room) return true;
+      showRoleForm('host');
+      $('statusText').textContent = 'H??y t???o ph??ng ho???c tham gia ph??ng tr?????c khi b???t ?????u.';
+      return false;
+    }
+    function generateRoomCode(){
+      return String(Math.floor(1000 + Math.random() * 9000));
+    }
+    function getRoomPlayers(data){
+      const obj = data && data.players ? data.players : {};
+      return Object.entries(obj).map(([id, p]) => ({ id, name: p.name || 'B???n', score: Number(p.score || 0), role: p.role || 'player', me: id === localPlayerId }));
+    }
+    function listenToRoom(code){
+      if(unsubscribeRoom) unsubscribeRoom();
+      unsubscribeRoom = onSnapshot(roomRef(code), snap => {
+        if(!snap.exists()){
+          $('statusText').textContent = 'Kh??ng t??m th???y ph??ng ho???c ph??ng ???? b??? x??a.';
+          return;
+        }
+        const prevPhase = currentPhase;
+        const prevRound = round;
+        roomData = snap.data();
+        room = code;
+        currentPhase = roomData.phase || (roomData.status === 'finished' ? 'finished' : 'question');
+        players = getRoomPlayers(roomData);
+        const me = players.find(p => p.me);
+        if(me) score = me.score;
+        $('roomCode').textContent = room;
+        $('lobbyTitle').textContent = roomData.roomName || ('Ph??ng ' + room);
+        renderPlayers();
+        updateHostProgress();
+        updateStageLayout();
+
+        if(roomData.status === 'waiting'){
+          clearInterval(timer);
+          clearTimeout(reviewTimer);
+          playing = false;
+          showFinalLeaderboard(false);
+          setQuestionSummaryVisible(false);
+          $('roomLobby')?.classList.add('show');
+          $('gameStage')?.classList.remove('show');
+          $('lobbyDesc').textContent = currentRole === 'host'
+            ? 'Chia s??? m?? ph??ng cho ng?????i ch??i. Khi ????? ng?????i, qu???n tr?? b???m ???B???t ?????u game???.'
+            : 'B???n ???? v??o ph??ng. Ch??? qu???n tr?? b???t ?????u tr?? ch??i.';
+          $('statusText').textContent = currentRole === 'host'
+            ? 'Ph??ng ???? s???n s??ng. B???m ???B???t ?????u game??? khi mu???n b???t ?????u.'
+            : '???? tham gia ph??ng. Ch??? qu???n tr?? b???t ?????u.';
+          return;
+        }
+
+        if(roomData.status === 'playing'){
+          const remoteRound = Number(roomData.currentQuestion || 0);
+          let startMs = Number(roomData.questionStartedAtMs || 0);
+          if(!startMs && roomData.questionStartedAt?.toMillis) startMs = roomData.questionStartedAt.toMillis();
+          if(!startMs || startMs > Date.now() + 1000) startMs = Date.now();
+          $('roomLobby')?.classList.remove('show');
+          $('gameStage')?.classList.add('show');
+          updateStageLayout();
+
+          if(currentPhase === 'question'){
+            clearTimeout(reviewTimer);
+            showFinalLeaderboard(false);
+            setQuestionSummaryVisible(false);
+            if(!playing || remoteRound !== prevRound || prevPhase !== 'question'){
+              beginRemoteGame(remoteRound, startMs);
+            } else {
+              round = remoteRound;
+              const puzzle = puzzles[round];
+              if(puzzle) renderAnswerBoxes(puzzle.answer, $('answerInput')?.value || '', getRevealCount(puzzle.answer, timeLeft));
+            }
+            const answered = playerHasAnswered(localPlayerId, roomData);
+            setAnswerDisabled(answered);
+            $('answerState').textContent = '';
+            $('statusText').textContent = currentRole === 'host'
+              ? '??ang trong c??u h???i. Khi t???t c??? ng?????i ch??i tr??? l???i ho???c h???t gi???, h??? th???ng s??? hi???n top 5.'
+              : answered ? 'B???n ???? tr??? l???i xong. ??ang ch??? c??c ng?????i ch??i kh??c.' : 'H??y nh???p ????p ??n tr?????c khi h???t gi???.';
+            updateHostProgress();
+            if(playing && !timer){
+              timer = setInterval(updateTimer, 250);
+            }
+            const activePlayers = getActivePlayers(players);
+            const answeredCount = Object.keys(getAnsweredMap(roomData)).length;
+            if(currentRole === 'host' && activePlayers.length && answeredCount >= activePlayers.length){
+              openRoundReview(`T???t c??? ng?????i ch??i ???? ho??n th??nh c??u ${remoteRound+1}.`);
+            }
+          }
+
+          if(currentPhase === 'review'){
+            playing = false;
+            clearInterval(timer);
+            setAnswerDisabled(true);
+            setQuestionSummaryVisible(true, roomData.reviewMessage || '???? ho??n th??nh c??u n??y. Chu???n b??? chuy???n sang c??u ti???p theo...');
+            renderRoundLeaderboard();
+            $('statusText').textContent = currentRole === 'host'
+              ? '??ang hi???n th??? top 5 c???a c??u n??y.'
+              : '??ang hi???n th??? top 5 sau c??u v???a r???i.';
+            if(currentRole === 'host' && (prevPhase !== 'review' || prevRound !== remoteRound)){
+              clearTimeout(reviewTimer);
+              reviewTimer = setTimeout(() => advanceAfterReview(), REVIEW_TIME * 1000);
+            }
+          }
+          return;
+        }
+
+        if(roomData.status === 'finished'){
+          playing = false;
+          clearInterval(timer);
+          clearTimeout(reviewTimer);
+          $('roomLobby')?.classList.remove('show');
+          $('gameStage')?.classList.add('show');
+          setQuestionSummaryVisible(false);
+          showFinalLeaderboard(true);
+          $('statusText').textContent = 'Game ???? k???t th??c. ????y l?? b???ng x???p h???ng cu???i c??ng.';
+          updateHostProgress();
+        }
+      }, err => {
+        console.error(err);
+        $('statusText').textContent = 'Kh??ng k???t n???i ???????c Firebase. Ki???m tra Firestore ???? b???t v?? rules cho ph??p ?????c/ghi.';
+      });
+    }
+    async function createRoom(){
+      const roomName = $('hostRoomName').value.trim() || 'Ph??ng ??n t???p MLN';
+      const host = 'Qu???n tr??';
+      localPlayerName = host;
+      room = generateRoomCode();
+      players = [{id:localPlayerId, name:host, score:0, role:'host', me:true}];
+      $('roomCode').textContent = room;
+      $('lobbyTitle').textContent = roomName;
+      $('lobbyDesc').textContent = '??ang t???o ph??ng...';
+      $('statusText').textContent = '??ang k???t n???i Firebase...';
+      showLobby('host');
+      try{
+        await setDoc(roomRef(), {
+          code: room,
+          roomName,
+          hostId: localPlayerId,
+          hostName: host,
+          status: 'waiting',
+          currentQuestion: 0,
+          questionStartedAt: null,
+          players: {
+            [localPlayerId]: { name: host, score: 0, role: 'host', joinedAt: Date.now() }
+          },
+          answeredPlayers: {},
+          phase: 'question',
+          createdAt: serverTimestamp()
+        });
+        listenToRoom(room);
+      }catch(err){
+        console.error(err);
+        $('statusText').textContent = 'T???o ph??ng th???t b???i. H??y b???t Cloud Firestore v?? ????? rules test mode khi demo.';
+      }
+    }
+    async function joinRoom(){
+      const code = ($('roomInput').value.trim() || '').toUpperCase();
+      const name = $('playerName').value.trim() || 'B???n';
+      if(!code){ $('statusText').textContent = 'Nh???p m?? ph??ng tr?????c khi tham gia.'; return; }
+      localPlayerName = name;
+      room = code;
+      $('roomCode').textContent = room;
+      $('lobbyTitle').textContent = 'Ph??ng ' + room;
+      $('lobbyDesc').textContent = '??ang tham gia ph??ng...';
+      $('statusText').textContent = '??ang k???t n???i Firebase...';
+      showLobby('player');
+      try{
+        const ref = roomRef(room);
+        const snap = await getDoc(ref);
+        if(!snap.exists()){
+          $('statusText').textContent = 'Kh??ng t??m th???y ph??ng. Ki???m tra l???i m?? ph??ng.';
+          return;
+        }
+        await updateDoc(ref, {
+          [`players.${localPlayerId}`]: { name, score: 0, role: 'player', joinedAt: Date.now() },
+          updatedAt: Date.now()
+        });
+        listenToRoom(room);
+      }catch(err){
+        console.error(err);
+        $('statusText').textContent = 'Tham gia ph??ng th???t b???i. Ki???m tra Firestore rules v?? m?? ph??ng.';
+      }
+    }
+    async function addBot(){
+      if(!room) return;
+      const names = ['Lan', 'Minh', 'Qu???c', 'Vy', 'Khoa', 'An'];
+      const name = names[Math.floor(Math.random()*names.length)] + ' AI';
+      const botId = 'bot_' + Math.random().toString(36).slice(2,8);
+      try{
+        await updateDoc(roomRef(), {
+          [`players.${botId}`]: { name, score: Math.max(0, score - Math.floor(Math.random()*140)), role: 'player', joinedAt: Date.now() },
+          updatedAt: Date.now()
+        });
+      }catch(err){
+        console.warn(err);
+      }
+    }
+    let questionStartMs = Date.now();
+    let revealedIndexes = new Set();
+    let revealOrder = [];
+    let lastRevealStep = 0;
+    function getLetterCount(answer){
+      return answerLetters(answer).filter(ch => ch !== ' ').length;
+    }
+    function getRevealCount(answer, secondsLeft){
+      const totalLetters = getLetterCount(answer);
+      if(totalLetters <= 1) return 0;
+      if(secondsLeft <= 0) return totalLetters;
+
+      if(secondsLeft > 25) return 0;
+
+      let count = 0;
+
+      // 25s -> 20s: m??? ch???m, m???i m???c 5s kho???ng 1 ch???.
+      count += Math.max(0, Math.floor((25 - secondsLeft) / 5) + 1);
+
+      // T??? 15s tr??? xu???ng: t??ng nh???p, m???i m???c 5s m??? th??m 1-2 ch???.
+      if(secondsLeft <= 15){
+        const fastSteps = Math.floor((15 - secondsLeft) / 5) + 1;
+        for(let i = 1; i <= fastSteps; i++){
+          count += i % 2 === 0 ? 2 : 1;
+        }
+      }
+
+      return Math.min(totalLetters, count);
+    }
+    function updateTimer(){
+      if(playing){
+        const elapsed = Math.max(0, Math.floor((Date.now() - questionStartMs) / 1000));
+        timeLeft = Math.max(0, QUESTION_TIME - elapsed);
+      }
+
+      const pct = Math.max(0, Math.round((timeLeft / QUESTION_TIME) * 100));
+      $('timerText').textContent = timeLeft + 's';
+      $('timerRing').style.setProperty('--progress', pct + '%');
+
+      const points = Math.max(0, Math.round(timeLeft * 5));
+      $('currentPoint').textContent = points;
+
+      const puzzle = puzzles[round];
+      if(puzzle){
+        renderAnswerBoxes(puzzle.answer, $('answerInput')?.value || '', getRevealCount(puzzle.answer, timeLeft));
+      }
+
+      if(timeLeft <= 0 && playing){
+        if(currentRole === 'host'){
+          openRoundReview(`H???t gi??? c??u ${round+1}.`);
+        }else{
+          setAnswerDisabled(true);
+          $('answerState').textContent = `H???t gi???. ????p ??n: ${puzzle ? puzzle.answer : ''}`;
+          renderAnswerBoxes(puzzle.answer, puzzle.answer, getLetterCount(puzzle.answer));
+        }
+      }
+    }
+
+    function answerLetters(answer){
+      return [...String(answer || '').toUpperCase()];
+    }
+    function makeRevealOrder(answer){
+      const indexes = [];
+      let letterIndex = 0;
+      answerLetters(answer).forEach(ch => {
+        if(ch !== ' ') indexes.push(letterIndex);
+        if(ch !== ' ') letterIndex++;
+      });
+
+      // X??o tr???n ????? ch??? g???i ?? hi???n ng???u nhi??n, kh??ng ch???y t??? tr??i sang ph???i.
+      for(let i = indexes.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [indexes[i], indexes[j]] = [indexes[j], indexes[i]];
+      }
+      return indexes;
+    }
+    function renderAnswerBoxes(answer, typed = '', revealCount = 0){
+      const box = $('answerBoxes');
+      if(!box) return;
+
+      const chars = answerLetters(answer);
+      const typedChars = [...String(typed || '').toUpperCase().replace(/\s+/g,'')];
+      const revealed = new Set((revealOrder || []).slice(0, revealCount));
+      let typedIndex = 0;
+      let letterIndex = 0;
+
+      box.innerHTML = '';
+      chars.forEach(ch => {
+        if(ch === ' '){
+          const sp = document.createElement('span');
+          sp.className = 'letter-space';
+          box.appendChild(sp);
+          return;
+        }
+
+        const cell = document.createElement('span');
+        cell.className = 'letter-box';
+
+        const typedChar = typedChars[typedIndex] || '';
+        if(typedChar){
+          cell.textContent = typedChar;
+        }else if(revealed.has(letterIndex)){
+          cell.textContent = ch;
+          cell.classList.add('revealed');
+        }else{
+          cell.textContent = '';
+          cell.classList.add('blank');
+        }
+
+        box.appendChild(cell);
+        typedIndex++;
+        letterIndex++;
+      });
+    }
+    function loadRound(startMs = Date.now()){
+      const puzzle = puzzles[round];
+      questionStartMs = startMs;
+      revealedIndexes = new Set();
+      revealOrder = makeRevealOrder(puzzle.answer);
+      lastRevealStep = 0;
+      timeLeft = Math.max(0, QUESTION_TIME - Math.max(0, Math.floor((Date.now() - questionStartMs) / 1000)));
+      $('roundBadge').textContent = `C??u ${round+1}/${puzzles.length}`;
+      $('categoryBadge').textContent = puzzle.category;
+      const frame = document.querySelector('.puzzle-frame');
+      const img = $('puzzleImage');
+      const art = $('puzzleArt');
+      if(puzzle.image && img){
+        img.src = puzzle.image;
+        img.alt = '???nh minh h???a cho c??u h???i ' + (round + 1);
+        img.classList.add('show');
+        if(frame) frame.classList.add('has-image');
+        if(art) art.style.display = 'none';
+        img.onerror = () => {
+          img.classList.remove('show');
+          if(frame) frame.classList.remove('has-image');
+          if(art){ art.style.display = 'block'; art.textContent = puzzle.art || '????'; }
+        };
+      } else {
+        if(img) img.classList.remove('show');
+        if(frame) frame.classList.remove('has-image');
+        if(art){ art.style.display = 'block'; art.textContent = puzzle.art || '????'; }
+      }
+      $('puzzleQuestion').textContent = puzzle.question || 'Nh??n h??nh v?? ??o??n kh??i ni???m.';
+      $('hintBox').innerHTML = '<b>???? G???i ??:</b> ' + puzzle.hint;
+      $('answerInput').value = '';
+      const answerBox = $('answerBoxes');
+      if(answerBox) answerBox.innerHTML = '';
+      setAnswerDisabled(currentRole === 'host');
+      $('answerState').textContent = currentRole === 'host' ? '' : 'Nh???p ????p ??n r???i b???m Tr??? l???i.';
+      renderAnswerBoxes(puzzle.answer, '', getRevealCount(puzzle.answer, timeLeft));
+      updateTimer();
+      setTimeout(() => {
+        if(currentRole !== 'host') $('answerInput')?.focus();
+      }, 80);
+    }
+    async function startGame(){
+      if(!ensureRoom()) return;
+      if(currentRole !== 'host'){
+        $('statusText').textContent = '??ang ch??? qu???n tr?? b???m b???t ?????u game.';
+        return;
+      }
+      const resetPlayers = {};
+      players.forEach(p => resetPlayers[p.id] = { name: p.name, score: 0, role: p.role || 'player', joinedAt: Date.now() });
+      try{
+        await updateDoc(roomRef(), {
+          status: 'playing',
+          phase: 'question',
+          currentQuestion: 0,
+          questionStartedAt: serverTimestamp(),
+          questionStartedAtMs: Date.now(),
+          answeredPlayers: {},
+          reviewStartedAt: null,
+          reviewMessage: 'Chu???n b??? c??u ?????u ti??n.',
+          players: resetPlayers
+        });
+      }catch(err){
+        console.error(err);
+        $('statusText').textContent = 'Kh??ng b???t ?????u ???????c game. Ki???m tra k???t n???i Firebase.';
+      }
+    }
+    function beginRemoteGame(remoteRound, startMs){
+      $('roomLobby')?.classList.remove('show');
+      $('gameStage')?.classList.add('show');
+      round = remoteRound;
+      playing = true;
+      revealedIndexes = new Set();
+      revealOrder = [];
+      lastRevealStep = 0;
+      clearInterval(timer);
+      loadRound(startMs || Date.now());
+      timer = setInterval(updateTimer, 250);
+      updateStageLayout();
+      if(currentRole === 'host') setAnswerDisabled(true);
+      renderPlayers();
+      updateHostProgress();
+    }
+    function correctEffect(){
+      const box = $('confetti');
+      box.innerHTML = '';
+      for(let i=0;i<26;i++){
+        const c=document.createElement('i');
+        c.style.left=Math.random()*100+'%';
+        c.style.background=['#39e5ff','#46a6ff','#ffd166','#5ee0a0','#8d7cff'][i%5];
+        c.style.animationDelay=(Math.random()*.25)+'s';
+        box.appendChild(c);
+      }
+      setTimeout(()=>box.innerHTML='',1500);
+    }
+    async function openRoundReview(message){
+      if(!room || !roomData || (roomData.phase || 'question') === 'review') return;
+      try{
+        await updateDoc(roomRef(), {
+          phase: 'review',
+          reviewStartedAt: serverTimestamp(),
+          reviewMessage: message || `???? ho??n th??nh c??u ${round+1}.`
+        });
+      }catch(err){
+        console.warn('Kh??ng m??? ???????c m??n top 5:', err);
+      }
+    }
+    async function submitAnswer(){
+      if(currentRole === 'host'){
+        $('statusText').textContent = 'Qu???n tr?? ch??? ??i???u khi???n game, kh??ng tr??? l???i c??u h???i.';
+        return;
+      }
+      if(!playing || !roomData) return;
+      if(playerHasAnswered(localPlayerId, roomData)){
+        $('statusText').textContent = 'B???n ???? tr??? l???i c??u n??y r???i.';
+        return;
+      }
+      updateTimer();
+      const puzzle = puzzles[round];
+      if(timeLeft <= 0){
+        $('statusText').textContent = 'H???t gi???.';
+        $('answerState').textContent = `H???t gi???. ????p ??n: ${puzzle.answer}`;
+        setAnswerDisabled(true);
+        renderAnswerBoxes(puzzle.answer, puzzle.answer, getLetterCount(puzzle.answer));
+        return;
+      }
+
+      const rawAnswer = $('answerInput').value.trim();
+      const ok = normalizeAnswer(rawAnswer) === normalizeAnswer(puzzle.answer);
+      if(!ok){
+        $('statusText').textContent = 'Ch??a ????ng, th??? l???i tr?????c khi h???t gi???.';
+        $('answerState').textContent = 'Sai r???i, nh???p l???i nhanh nh??.';
+        $('answerInput')?.focus();
+        return;
+      }
+
+      const earned = Math.max(0, Math.round(timeLeft * 5));
+      const currentMe = players.find(p => p.me) || { name: localPlayerName || 'B???n', role: currentRole || 'player', score: 0 };
+      const newScore = Number(currentMe.score || 0) + earned;
+      const localPlayer = players.find(p => p.id === localPlayerId);
+      if(localPlayer) localPlayer.score = newScore;
+      renderPlayers();
+      $('currentPoint').textContent = earned;
+      $('statusText').textContent = `Ch??nh x??c. +${earned} ??i???m.`;
+      $('answerState').textContent = `????ng r???i. ????p ??n: ${puzzle.answer}. B???n nh???n ${earned} ??i???m.`;
+      renderAnswerBoxes(puzzle.answer, puzzle.answer, getLetterCount(puzzle.answer));
+      setAnswerDisabled(true);
+      correctEffect();
+      try{
+        await updateDoc(roomRef(), {
+          [`players.${localPlayerId}`]: { name: currentMe.name, score: newScore, role: currentMe.role || currentRole || 'player', joinedAt: Date.now() },
+          [`answeredPlayers.${localPlayerId}`]: { correct: true, earned, at: Date.now(), question: round }
+        });
+        if(currentRole === 'host' && getActivePlayers(players).length <= 1){
+          await openRoundReview(`Ho??n th??nh c??u ${round+1}.`);
+        }
+      }catch(err){
+        console.error(err);
+        $('statusText').textContent = '????ng nh??ng ch??a ?????ng b??? ???????c ??i???m. Ki???m tra k???t n???i Firebase.';
+      }
+    }
+    async function advanceAfterReview(){
+      if(currentRole !== 'host') return;
+      const next = round + 1;
+      try{
+        if(next >= puzzles.length){
+          await updateDoc(roomRef(), {
+            status: 'finished',
+            phase: 'finished'
+          });
+        }else{
+          await updateDoc(roomRef(), {
+            status: 'playing',
+            phase: 'question',
+            currentQuestion: next,
+            questionStartedAt: serverTimestamp(),
+            questionStartedAtMs: Date.now(),
+            answeredPlayers: {},
+            reviewStartedAt: null,
+            reviewMessage: `Chu???n b??? c??u ${next+1}.`
+          });
+        }
+      }catch(err){
+        console.warn('Kh??ng chuy???n sang c??u ti???p theo ???????c:', err);
+      }
+    }
+    async function resetGame(){
+      if(!room) return;
+      clearInterval(timer);
+      clearTimeout(reviewTimer);
+      playing = false;
+      score = 0; round = 0; timeLeft = QUESTION_TIME;
+      $('timerText').textContent = QUESTION_TIME + 's';
+      $('timerRing').style.setProperty('--progress','100%');
+      $('currentPoint').textContent = '100';
+      const resetPlayers = {};
+      players.forEach(p => resetPlayers[p.id] = { name: p.name, score: 0, role: p.role || 'player', joinedAt: Date.now() });
+      try{
+        await updateDoc(roomRef(), {
+          status: 'waiting',
+          phase: 'question',
+          currentQuestion: 0,
+          questionStartedAt: null,
+          questionStartedAtMs: null,
+          answeredPlayers: {},
+          reviewStartedAt: null,
+          reviewMessage: '',
+          players: resetPlayers
+        });
+        showFinalLeaderboard(false);
+      }catch(err){
+        console.warn(err);
+      }
+    }
+
+    document.querySelectorAll('.game-mode-btn').forEach(btn => btn.addEventListener('click', () => switchGameMode(btn.dataset.gameMode)));
+    document.querySelectorAll('.mode-back').forEach(btn => btn.addEventListener('click', backToGameModeSelector));
+    document.querySelectorAll('.count-btn').forEach(btn => btn.addEventListener('click', () => setPracticeCount(Number(btn.dataset.count))));
+    $('startPractice')?.addEventListener('click', () => startPractice(true));
+    $('useDefaultPractice')?.addEventListener('click', () => startPractice(false));
+    $('prevPractice')?.addEventListener('click', prevPractice);
+    $('nextPractice')?.addEventListener('click', nextPractice);
+    $('restartPractice')?.addEventListener('click', restartPractice);
+
+    const createRoomBtn = $('createRoom');
+    if(createRoomBtn){
+      $('chooseHost').addEventListener('click', () => showRoleForm('host'));
+      $('choosePlayer').addEventListener('click', () => showRoleForm('player'));
+      createRoomBtn.addEventListener('click', createRoom);
+      $('joinRoom').addEventListener('click', joinRoom);
+      $('startGameLobby').addEventListener('click', startGame);
+      $('startGame').addEventListener('click', startGame);
+      $('resetGame').addEventListener('click', resetGame);
+      $('submitAnswer').addEventListener('click', submitAnswer);
+      $('answerInput').addEventListener('keydown', e => { if(e.key === 'Enter') submitAnswer(); });
+      $('answerInput').addEventListener('input', e => {
+        const puzzle = puzzles[round];
+        if(puzzle) renderAnswerBoxes(puzzle.answer, e.target.value, getRevealCount(puzzle.answer, timeLeft));
+      });
+      $('hostRoomName').value = '';
+      $('playerName').value = '';
+      renderPlayers();
+      loadRound();
+    }
+  </script>
+
+<script>
+(function(){
+  const host=document.getElementById('quickHost'), join=document.getElementById('quickJoin'), ai=document.getElementById('quickAI');
+  function scrollToGame(){document.getElementById('game')?.scrollIntoView({behavior:'smooth',block:'start'});}
+  host?.addEventListener('click',()=>{scrollToGame();setTimeout(()=>document.getElementById('chooseHost')?.click(),250);});
+  join?.addEventListener('click',()=>{scrollToGame();setTimeout(()=>document.getElementById('choosePlayer')?.click(),250);});
+  ai?.addEventListener('click',()=>{scrollToGame();setTimeout(()=>{const b=document.querySelector('[data-game-mode="practiceMode"]');b?.click();},250);});
+})();
+</script>
+</body>
+</html>
