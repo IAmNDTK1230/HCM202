@@ -1,0 +1,241 @@
+
+<div class="bg-layer"><div class="planet one"></div><div class="planet two"></div><div class="wire"></div></div>
+<header><div class="nav">
+  <div class="brand"><div class="logo">ML</div><div><div class="brand-title">MLN122</div><div class="brand-sub">Nguyên tắc đoàn kết quốc tế</div></div></div>
+  <nav class="nav-tabs"><button class="tab-btn active">🎮 Game & AI</button></nav>
+</div></header>
+<main>
+  <section class="hero redesigned-hero">
+    <div class="hero-copy">
+      <div class="eyebrow"><span class="dot"></span> MLN122 · 5.2.3</div>
+      <h1>Đoàn kết quốc tế<br><span class="accent-text">Học bằng cách chơi.</span></h1>
+      <p class="lead">Đoán hình – thi đấu 10 câu – tích điểm theo tốc độ. Hoặc luyện tập với AI trước khi vào phòng.</p>
+      <div class="hero-stats">
+        <div><b>10</b><span>Câu hỏi</span></div>
+        <div><b>20s</b><span>Mỗi câu</span></div>
+        <div><b>100</b><span>Điểm tối đa</span></div>
+      </div>
+    </div>
+    <div class="hero-art">
+      <div class="orbit-card"><span>🤝</span><b>ĐOÀN KẾT</b><small>Đuổi hình bắt chữ</small></div>
+      <div class="orbit-dot d1"></div><div class="orbit-dot d2"></div><div class="orbit-dot d3"></div>
+    </div>
+  </section>
+  <section class="quick-actions" aria-label="Chọn hoạt động">
+    <button class="action-card action-host" id="quickHost" type="button">
+      <span class="action-icon">＋</span><span class="action-tag">QUẢN TRÒ</span>
+      <strong>Tạo phòng</strong><p>Tạo mã phòng và điều khiển 10 câu hỏi.</p><span class="action-link">Bắt đầu →</span>
+    </button>
+    <button class="action-card action-join" id="quickJoin" type="button">
+      <span class="action-icon">↗</span><span class="action-tag">NGƯỜI CHƠI</span>
+      <strong>Tham gia phòng</strong><p>Nhập mã phòng để thi đấu cùng mọi người.</p><span class="action-link">Vào phòng →</span>
+    </button>
+    <button class="action-card action-ai" id="quickAI" type="button">
+      <span class="action-icon">✦</span><span class="action-tag">AI TUTOR</span>
+      <strong>Ôn luyện với AI</strong><p>Luyện câu hỏi lý thuyết trước khi thi đấu.</p><span class="action-link">Luyện tập →</span>
+    </button>
+  </section>
+  <div class="surface">
+<section id="game" class="tab-panel">
+      <div class="section-head">
+        <div class="kicker">Game ôn tập</div>
+        <h2>Ôn tập</h2>
+      </div>
+      <div class="surface">
+        <div class="game-shell">
+          <div class="game-mode-tabs" id="gameModeSelector">
+            <button class="game-mode-btn active" data-game-mode="roomMode">🎮 Chơi đuổi hình bắt chữ</button>
+            <button class="game-mode-btn" data-game-mode="practiceMode">🧠 Ôn luyện lý thuyết với AI</button>
+          </div>
+
+          <div class="game-mode-panel show" id="roomMode">
+            <button class="game-btn alt mode-back" type="button">← Chọn chế độ khác</button>
+            <div class="role-screen" id="roleScreen">
+              <div class="role-card host-card">
+                <div class="role-icon">🎮</div>
+                <h3>Bạn là Quản Trò?</h3>
+                <p>Tạo phòng mới, hiển thị mã phòng và điều khiển game ôn tập.</p>
+                <button class="role-select" id="chooseHost">Chọn Quản Trò</button>
+                <div class="role-form" id="hostForm">
+                  <input id="hostRoomName" class="room-input" placeholder="Tên phòng" maxlength="24" />
+                  <button id="createRoom" class="game-btn">Tạo phòng mới</button>
+                </div>
+              </div>
+              <div class="role-card player-card">
+                <div class="role-icon amber">👥</div>
+                <h3>Bạn là Người Chơi?</h3>
+                <p>Nhập mã phòng từ màn hình của quản trò để tham gia.</p>
+                <button class="role-select amber" id="choosePlayer">Chọn Người Chơi</button>
+                <div class="role-form" id="playerForm">
+                  <input id="roomInput" class="room-input" placeholder="Nhập mã phòng" maxlength="5" />
+                  <input id="playerName" class="room-input" placeholder="Tên bạn" maxlength="18" />
+                  <button id="joinRoom" class="game-btn amber-btn">Tham gia ngay</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="room-lobby" id="roomLobby">
+              <div class="room-card lobby-main">
+                <div>
+                  <span class="badge hot" id="roleBadge">Quản trò</span>
+                  <h3 id="lobbyTitle">Phòng ôn tập</h3>
+                  <p class="game-note" id="lobbyDesc">Chia sẻ mã phòng cho người chơi. Khi đủ người, quản trò bấm “Bắt đầu game”.</p>
+                </div>
+                <div class="big-room-code">
+                  <span>Mã phòng</span>
+                  <b id="roomCode">-----</b>
+                </div>
+                <div class="room-actions">
+                  <button id="startGameLobby" class="game-btn good">Bắt đầu game</button>
+                </div>
+              </div>
+              <div class="room-card">
+                <h3>Người chơi trong phòng</h3>
+                <div class="player-list" id="playerList"></div>
+              </div>
+            </div>
+
+            <div class="game-stage" id="gameStage">
+              <div class="game-card game-main-card" id="gameMainCard" style="position:relative">
+                <div class="confetti" id="confetti"></div>
+                <div class="game-top">
+                  <div style="display:flex;gap:8px;flex-wrap:wrap">
+                    <span class="badge hot" id="roundBadge">Câu 1/10</span>
+                    <span class="badge">Điểm câu này: <b id="currentPoint">100</b></span>
+                  </div>
+                  <div class="timer-ring" id="timerRing"><span id="timerText">30s</span></div>
+                </div>
+
+                <div class="puzzle-frame">
+                  <div class="puzzle-title">
+                    <span class="badge" id="categoryBadge">Lý thuyết</span>
+                    <span class="badge">Đuổi hình bắt chữ</span>
+                  </div>
+                  <img class="puzzle-img" id="puzzleImage" src="" alt="Ảnh câu hỏi" />
+                  <div class="puzzle-art" id="puzzleArt">🏭 ➜ 🏢</div>
+                </div>
+
+                <div class="puzzle-question" id="puzzleQuestion">Câu hỏi sẽ hiện ở đây.</div>
+                <div class="hint-box" id="hintBox">Gợi ý sẽ hiện ở đây.</div>
+                <div class="reveal-word" id="answerBoxes" aria-label="Ô chữ đáp án"></div>
+                <div class="answer-row compact">
+                  <input id="answerInput" class="game-input" placeholder="Nhập đáp án..." autocomplete="off" />
+                  <button id="submitAnswer" class="game-btn good">Trả lời</button>
+                </div>
+                <div class="answer-state" id="answerState"></div>
+              </div>
+
+              <div class="score-panel host-side" id="hostSidePanel">
+                <div class="game-card">
+                  <h3>Điều khiển quản trò</h3>
+                  <div class="host-status-box">
+                    <b id="hostProgressText">Đang chờ bắt đầu</b>
+                    <p id="statusText">Tạo phòng rồi bấm “Bắt đầu game”.</p>
+                  </div>
+                  <div class="room-actions" style="margin-top:14px">
+                    <button id="startGame" class="game-btn">Bắt đầu game</button>
+                    <button id="resetGame" class="game-btn alt">Chơi lại</button>
+                  </div>
+                </div>
+                <div class="game-card">
+                  <h3>Bảng điểm hiện tại</h3>
+                  <div class="leaderboard" id="leaderboard"></div>
+                </div>
+              </div>
+
+              <div class="game-card round-summary-card" id="roundSummaryCard">
+                <h3 id="roundSummaryTitle">Bảng điểm hiện tại</h3>
+                <div class="leaderboard" id="roundLeaderboard"></div>
+                <p class="summary-note" id="roundSummaryNote">Đang chờ chuyển sang câu tiếp theo...</p>
+              </div>
+
+              <div class="game-card final-summary-card" id="finalLeaderboardCard">
+                <div class="final-title">
+                  <div>
+                    <h3>VINH DANH TOP 3</h3>
+                    <p>Hoàn thành đủ 10 câu — 3 người chơi có tổng điểm cao nhất sẽ được vinh danh.</p>
+                  </div>
+                  <span class="badge hot">Top 3</span>
+                </div>
+                <div class="leaderboard big" id="finalLeaderboard"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="game-mode-panel" id="practiceMode">
+            <button class="game-btn alt mode-back" type="button">← Chọn chế độ khác</button>
+            <div class="practice-grid" id="practiceSetup">
+              <div class="practice-card intro">
+                <span class="badge hot">AI Tutor</span>
+                <h3>Ôn tập với AI từ học liệu</h3>
+                <p>Người học chỉ cần chọn số câu muốn luyện và dạng câu hỏi phù hợp.</p>
+
+                <div class="ai-source-box">
+                  <div class="ai-form-row">
+                    <div class="ai-field">
+                      <label for="aiQuestionCount">Số câu muốn luyện tập</label>
+                      <input id="aiQuestionCount" type="number" min="1" max="50" value="10" />
+                    </div>
+                    <div class="ai-field">
+                      <label for="questionType">Dạng câu hỏi</label>
+                      <select id="questionType">
+                        <option value="multiple_choice">Multiple choice</option>
+                        <option value="fill_blank">Điền vào chỗ trống</option>
+                        <option value="mixed">Kết hợp cả hai</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="mini-actions">
+                    <button id="startPractice" class="game-btn good">Tạo câu hỏi từ học liệu</button>
+                    <button id="useDefaultPractice" class="game-btn alt">Dùng bộ câu hỏi dự phòng</button>
+                  </div>
+                  <p class="game-note" id="practiceGenerateStatus">Sẵn sàng tạo câu hỏi.</p>
+                </div>
+              </div>
+              <div class="practice-card">
+                <h3>Cách hoạt động</h3>
+                <ul>
+                  <li>Nhập tối đa <b>50 câu</b> cho một lần ôn tập.</li>
+                  <li>Chọn <b>Multiple choice</b>, <b>Điền vào chỗ trống</b> hoặc <b>Kết hợp</b>.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="practice-quiz" id="practiceQuiz">
+              <div class="practice-main">
+                <div class="game-top">
+                  <div style="display:flex;gap:8px;flex-wrap:wrap">
+                    <span class="badge hot" id="practiceCounter">Câu 1/10</span>
+                    <span class="badge">Điểm: <b id="practiceScore">0</b></span>
+                  </div>
+                  <span class="badge" id="practiceTopic">Lý thuyết</span>
+                </div>
+                <div class="practice-progress"><span id="practiceProgress"></span></div>
+                <h3 id="practiceQuestion">Câu hỏi sẽ hiện ở đây</h3>
+                <div class="practice-options" id="practiceOptions"></div>
+                <div class="ai-explain" id="aiExplain">
+                  <b>AI giải thích</b>
+                  <p>Chọn một đáp án để xem giải thích.</p>
+                </div>
+                <div class="room-actions">
+                  <button id="prevPractice" class="game-btn alt">Câu trước</button>
+                  <button id="nextPractice" class="game-btn">Câu tiếp theo</button>
+                  <button id="restartPractice" class="game-btn alt">Ôn lại</button>
+                </div>
+              </div>
+              <div class="practice-side">
+                <div class="game-card final-practice-card" id="practiceFinalCard" style="display:none">
+                  <h3>Kết quả cuối</h3>
+                  <div class="score-big" id="practiceResult">0/0</div>
+                  <p class="game-note" id="practiceStatus">Hoàn thành bài ôn tập.</p>
+                </div>
+                <div class="feed" id="practiceFeed" style="display:none"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>

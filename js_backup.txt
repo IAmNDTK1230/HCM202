@@ -1,0 +1,1083 @@
+<script type="module">
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import { getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot, serverTimestamp, arrayUnion } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBgasCH5TtnnaWzvofHHgR9NP6lczAPU5M",
+      authDomain: "mln122-63e0c.firebaseapp.com",
+      projectId: "mln122-63e0c",
+      storageBucket: "mln122-63e0c.firebasestorage.app",
+      messagingSenderId: "75579579116",
+      appId: "1:75579579116:web:f4f63d1af921119fe663c9",
+      measurementId: "G-TB20Y6DB9P"
+    };
+
+    const firebaseApp = initializeApp(firebaseConfig);
+    const db = getFirestore(firebaseApp);
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const panels = document.querySelectorAll('.tab-panel');
+    function openTab(id){
+      tabButtons.forEach(b => b.classList.toggle('active', b.dataset.tab === id));
+      panels.forEach(p => p.classList.toggle('active', p.id === id));
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+    window.__mlnOpenTab = openTab;
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        openTab(btn.dataset.tab);
+      }, true);
+    });
+    document.querySelectorAll('[data-go]').forEach(btn => btn.addEventListener('click', () => openTab(btn.dataset.go)));
+
+    document.querySelector('.brand')?.addEventListener('keydown', e => {
+      if(e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        openTab('home');
+      }
+    });
+
+    const subButtons = document.querySelectorAll('.sub-btn');
+    subButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const parent = btn.closest('.surface');
+        parent.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
+        parent.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        parent.querySelector('#' + btn.dataset.sub).classList.add('active');
+      });
+    });
+
+    document.querySelectorAll('.acc button').forEach(btn => {
+      btn.addEventListener('click', () => btn.parentElement.classList.toggle('open'));
+    });
+
+    document.querySelectorAll('.highlight').forEach(el => {
+      el.addEventListener('click', () => {
+        const target = document.getElementById(el.dataset.img);
+        if (!target) return;
+        const isOpen = target.classList.toggle('show');
+        if (isOpen) target.scrollIntoView({behavior:'smooth', block:'nearest'});
+      });
+    });
+    document.querySelectorAll('.close-img').forEach(btn => btn.addEventListener('click', () => btn.closest('.inline-image').classList.remove('show')));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.inline-image').forEach(img => img.classList.remove('show')); });
+
+
+    const puzzles = [
+      {image:'Images/cau_01.png', art:'???? ????', answer:'??O??N K???T', category:'??i???m chung', question:'H??nh ???nh g???i ra nguy??n t???c ph???i t??m nh???ng ??i???m t????ng ?????ng v??? m???c ti??u v?? l???i ??ch gi???a c??c l???c l?????ng l?? g???', hint:'Hai ti???ng, b???t ?????u b???ng ?????o??n???.'},
+      {image:'Images/cau_02.png', art:'?????? ??????', answer:'C?? L?? C?? T??NH', category:'C??ch th???c', question:'??o??n k???t v?? th???ng nh???t trong phong tr??o c???ng s???n v?? c??ng nh??n qu???c t??? ph???i ???????c th???c hi???n nh?? th??? n??o?', hint:'M???t c???m 5 ti???ng, th??? hi???n s??? k???t h???p gi???a nguy??n t???c v?? t??nh c???m.'},
+      {image:'Images/cau_03.png', art:'???? ????', answer:'M???C TI??U', category:'??i???m chung', question:'Khi t??m ??i???m t????ng ?????ng gi???a c??c l???c l?????ng, c???n xem x??t s??? gi???ng nhau v??? ??i???u g?? tr?????c ti??n?', hint:'Hai ti???ng, li??n quan ?????n ??i???u mu???n ?????t ???????c.'},
+      {image:'Images/cau_04.png', art:'???? ??????', answer:'B??NH ?????NG', category:'C??c d??n t???c', question:'Gi???a c??c d??n t???c tr??n th??? gi???i, Vi???t Nam ????? cao quy???n n??o b??n c???nh ?????c l???p v?? t??? do?', hint:'Hai ti???ng, n??i v??? s??? ngang b???ng v??? quy???n l???i v?? ?????a v???.'},
+      {image:'Images/cau_05.png', art:'???? ???????', answer:'T??? QUY???T', category:'Ch??? quy???n', question:'Vi???t Nam t??n tr???ng ?????c l???p, ch??? quy???n, th???ng nh???t, to??n v???n l??nh th??? v?? quy???n n??o c???a c??c qu???c gia?', hint:'Hai ti???ng, n??i v??? quy???n t??? m??nh quy???t ?????nh con ???????ng c???a qu???c gia.'},
+      {image:'Images/cau_06.png', art:'??????? ???????', answer:'CH??? QUY???N', category:'Ch??? quy???n', question:'Vi???t Nam t??n tr???ng ?????c l???p, quy???n g?? c??ng v???i th???ng nh???t v?? to??n v???n l??nh th??? c???a c??c qu???c gia?', hint:'Hai ti???ng, n??i v??? quy???n t???i cao c???a m???t qu???c gia ?????i v???i l??nh th???.'},
+      {image:'Images/cau_07.png', art:'???? ????', answer:'N???I L???C', category:'S???c m???nh b??n trong', question:'Ngu???n l???c b??n ngo??i ???????c tranh th??? nh???m t??ng th??m y???u t??? n??o, trong ???? y???u t??? n??y gi??? vai tr?? quy???t ?????nh?', hint:'Hai ti???ng, ch??? s???c m???nh b??n trong c???a ?????t n?????c.'},
+      {image:'Images/cau_08.png', art:'???? ????', answer:'TH???C L???C', category:'Ngo???i giao', question:'Trong h??nh ???nh ???... l?? c??i chi??ng, ngo???i giao l?? c??i ti???ng???, y???u t??? n??o ph???i c?? ????? ngo???i giao ph??t huy hi???u qu????', hint:'Hai ti???ng, li??n quan ?????n s???c m???nh th???c t??? c???a ?????t n?????c.'},
+      {image:'Images/cau_09.png', art:'???? ????', answer:'NGO???I GIAO', category:'Ngo???i giao', question:'Trong h??nh ???nh ???th???c l???c l?? c??i chi??ng, ... l?? c??i ti???ng???, t??? c??n thi???u l?? g???', hint:'Hai ti???ng, li??n quan ?????n quan h??? v?? ho???t ?????ng ?????i ngo???i.'},
+      {image:'Images/cau_10.png', art:'???? ????', answer:'L???I ??CH', category:'??i???m chung', question:'Ngo??i m???c ti??u, ??o??n k???t qu???c t??? y??u c???u t??m ra ??i???m t????ng ?????ng v??? ??i???u g?? gi???a c??c l???c l?????ng?', hint:'Hai ti???ng, li??n quan ?????n quy???n l???i c???a c??c l???c l?????ng.'}
+    ];
+
+    let room = null;
+    let roomData = null;
+    let players = [];
+    let score = 0;
+    let round = 0;
+    let timeLeft = 60;
+    let timer = null;
+    let reviewTimer = null;
+    let playing = false;
+    let currentRole = null;
+    let currentPhase = 'idle';
+    const QUESTION_TIME = 20;
+    const REVIEW_TIME = 4;
+    let localPlayerId = sessionStorage.getItem('mlnPlayerId') || ('p_' + Math.random().toString(36).slice(2,10));
+    let localPlayerName = '';
+    let unsubscribeRoom = null;
+    let syncingRemote = false;
+    sessionStorage.setItem('mlnPlayerId', localPlayerId);
+
+    const $ = id => document.getElementById(id);
+    const normalizeAnswer = str => (str || '')
+      .toUpperCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g,'')
+      .replace(/??/g,'D')
+      .replace(/[^A-Z0-9]/g,'');
+
+
+    const theoryQuestions = [
+      {topic:'??i???m chung', q:'Mu???n th???c hi???n ??o??n k???t qu???c t???, tr?????c h???t c???n t??m ra ??i???u g???', options:['??i???m t????ng ?????ng v??? m???c ti??u v?? l???i ??ch','S??? gi???ng nhau v??? m???i m???t','M???t th??? tr?????ng chung','M???t c?? ch??? qu??n s??? chung'], correct:0, explain:'Nguy??n t???c ??o??n k???t qu???c t??? y??u c???u t??m ra nh???ng ??i???m t????ng ?????ng v??? m???c ti??u v?? l???i ??ch gi???a c??c l???c l?????ng.'},
+      {topic:'Phong tr??o c???ng s???n', q:'?????i v???i phong tr??o c???ng s???n v?? c??ng nh??n qu???c t???, ng???n c??? n??o ???????c nh???n m???nh?', options:['?????c l???p d??n t???c g???n li???n v???i ch??? ngh??a x?? h???i','T??ch r???i ?????c l???p d??n t???c kh???i ch??? ngh??a x?? h???i','Ch??? ??u ti??n l???i ??ch kinh t???','Kh??ng c???n th???ng nh???t'], correct:0, explain:'N???i dung nh???n m???nh ?????c l???p d??n t???c g???n li???n v???i ch??? ngh??a x?? h???i.'},
+      {topic:'C??ch th???c ??o??n k???t', q:'??o??n k???t th???ng nh???t trong phong tr??o c???ng s???n v?? c??ng nh??n qu???c t??? ph???i ???????c th???c hi???n nh?? th??? n??o?', options:['C?? l??, c?? t??nh','Ch??? d???a v??o kinh t???','Ch??? d???a v??o qu??n s???','Kh??ng c???n nguy??n t???c'], correct:0, explain:'??o??n k???t th???ng nh???t ph???i ???????c th???c hi???n tr??n tinh th???n ???c?? l??, c?? t??nh???.'},
+      {topic:'C??c d??n t???c', q:'Vi???t Nam gi????ng cao ng???n c??? n??o gi???a c??c d??n t???c tr??n th??? gi???i?', options:['?????c l???p, t??? do v?? quy???n b??nh ?????ng','?????c quy???n v?? l???i nhu???n','T??? c?? l???p v?? ????ng c???a','??u ti??n m???t d??n t???c duy nh???t'], correct:0, explain:'N???i dung n??u ?????c l???p, t??? do v?? quy???n b??nh ?????ng gi???a c??c d??n t???c.'},
+      {topic:'Ch??? quy???n', q:'Vi???t Nam t??n tr???ng quy???n n??o c???a c??c qu???c gia trong quan h??? qu???c t????', options:['Quy???n t??? quy???t','Quy???n can thi???p','Quy???n ??p ?????t','Quy???n ph??? nh???n ch??? quy???n'], correct:0, explain:'Vi???t Nam t??n tr???ng ?????c l???p, ch??? quy???n, th???ng nh???t, to??n v???n l??nh th??? v?? quy???n t??? quy???t c???a c??c qu???c gia.'},
+      {topic:'N???i l???c', q:'M???c ????ch c???a vi???c tranh th??? s??? gi??p ????? b??n ngo??i l?? g???', options:['T??ng th??m n???i l???c','Thay th??? ho??n to??n n???i l???c','T??? b??? ?????c l???p t??? ch???','Ph??? thu???c v??o b??n ngo??i'], correct:0, explain:'Ngu???n l???c b??n ngo??i ???????c tranh th??? ????? t??ng th??m n???i l???c; n???i l???c gi??? vai tr?? quy???t ?????nh.'},
+      {topic:'T??? l???c', q:'Kh???u hi???u n??o th??? hi???n y??u c???u d???a v??o s???c m??nh l?? ch??nh?', options:['T??? l???c c??nh sinh','Ngo???i giao l?? quy???t ?????nh','Ph??? thu???c l???n nhau','??o??n k???t tuy???t ?????i'], correct:0, explain:'???T??? l???c c??nh sinh, d???a v??o s???c m??nh l?? ch??nh??? nh???n m???nh vai tr?? c???a n???i l???c.'},
+      {topic:'Ngo???i giao', q:'C??u ???th???c l???c l?? c??i chi??ng, ngo???i giao l?? c??i ti???ng??? nh???n m???nh ??i???u g???', options:['Ph???i c?? th???c l???c th?? ngo???i giao m???i ph??t huy hi???u qu???','Ngo???i giao thay th??? th???c l???c','Ch??? c???n ngo???i giao','Ngo???i giao kh??ng c?? vai tr??'], correct:0, explain:'H??nh ???nh n??y nh???n m???nh th???c l???c l?? n???n t???ng ????? ho???t ?????ng ngo???i giao ph??t huy hi???u qu???.'},
+      {topic:'Quan h??? gi???a c??c ?????ng', q:'C??c ?????ng c???ng s???n d?? l???n hay nh??? c???n gi??? quan h??? nh?? th??? n??o?', options:['?????c l???p, b??nh ?????ng v?? ??o??n k???t gi??p ????? l???n nhau','?????ng l???n quy???t ?????nh m???i vi???c','?????ng nh??? ph???i ph??? thu???c','Kh??ng c???n ??o??n k???t'], correct:0, explain:'C??c ?????ng ph???i ?????c l???p, b??nh ?????ng v?? ??o??n k???t gi??p ????? l???n nhau.'},
+      {topic:'M???c ti??u', q:'??o??n k???t qu???c t??? c???n k???t h???p s???c m???nh b??n ngo??i v???i y???u t??? n??o?', options:['S???c m???nh n???i l???c','S??? ph??? thu???c b??n ngo??i','Vi???c t??? b??? t??? ch???','S??? c?? l???p qu???c t???'], correct:0, explain:'??o??n k???t qu???c t??? nh???m tranh th??? ngu???n l???c b??n ngo??i ????? t??ng th??m n???i l???c, trong ???? n???i l???c l?? nh??n t??? quy???t ?????nh.'}
+    ];
+
+    let practiceCount = 10;
+    let practiceType = 'multiple_choice';
+    let practiceSet = [];
+    let practiceIndex = 0;
+    let practiceScoreValue = 0;
+    let practiceAnswered = false;
+
+    function shuffleArray(arr){
+      const a = [...arr];
+      for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+      return a;
+    }
+    function switchGameMode(id){
+      const selector = $('gameModeSelector');
+      if(selector) selector.style.display = 'none';
+      document.querySelectorAll('.game-mode-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.gameMode === id));
+      document.querySelectorAll('.game-mode-panel').forEach(panel => panel.classList.toggle('show', panel.id === id));
+      if(id === 'practiceMode') clearInterval(timer);
+    }
+    function backToGameModeSelector(){
+      clearInterval(timer);
+      playing = false;
+      document.querySelectorAll('.game-mode-panel').forEach(panel => panel.classList.remove('show'));
+      const selector = $('gameModeSelector');
+      if(selector) selector.style.display = 'flex';
+      document.querySelectorAll('.game-mode-btn').forEach(btn => btn.classList.remove('active'));
+    }
+    function getPracticeSettings(){
+      const countInput = $('aiQuestionCount');
+      const typeInput = $('questionType');
+      const rawCount = Number(countInput ? countInput.value : 10);
+      practiceCount = Math.max(1, Math.min(50, Number.isFinite(rawCount) ? rawCount : 10));
+      if(countInput) countInput.value = practiceCount;
+      practiceType = typeInput ? typeInput.value : 'multiple_choice';
+      return { count: practiceCount, questionType: practiceType };
+    }
+    function setPracticeCount(count){
+      practiceCount = Math.max(1, Math.min(50, Number(count) || 10));
+      const countInput = $('aiQuestionCount');
+      if(countInput) countInput.value = practiceCount;
+      document.querySelectorAll('.count-btn').forEach(btn => btn.classList.toggle('active', Number(btn.dataset.count) === practiceCount));
+    }
+    function normalizePracticeQuestion(q, idx){
+      const type = q.type || q.questionType || (q.options ? 'multiple_choice' : 'fill_blank');
+      const base = {
+        type: type === 'fill_blank' ? 'fill_blank' : 'multiple_choice',
+        topic: q.topic || 'AI Tutor',
+        q: q.q || q.question || `C??u h???i ${idx+1}`,
+        explain: q.explain || q.explanation || 'AI ch??a t???o gi???i th??ch.'
+      };
+      if(base.type === 'fill_blank'){
+        const answer = String(q.answer || q.correctAnswer || q.correct || '').trim();
+        const accepted = Array.isArray(q.acceptedAnswers) ? q.acceptedAnswers.map(x => String(x).trim()).filter(Boolean) : [];
+        return {...base, answer, acceptedAnswers: accepted.length ? accepted : [answer]};
+      }
+      return {
+        ...base,
+        options: q.options || [],
+        correct: Number.isInteger(q.correct) ? q.correct : Number(q.answerIndex || 0)
+      };
+    }
+    function validPracticeQuestion(q){
+      if(q.type === 'fill_blank') return Boolean(q.answer || (q.acceptedAnswers && q.acceptedAnswers.length));
+      return Array.isArray(q.options) && q.options.length === 4 && q.correct >= 0 && q.correct <= 3;
+    }
+    function buildFallbackSet(count, type){
+      let bank = shuffleArray(theoryQuestions);
+      while(bank.length < count) bank = bank.concat(shuffleArray(theoryQuestions));
+      let chosen = bank.slice(0, count).map((q, idx) => normalizePracticeQuestion(q, idx));
+      if(type === 'fill_blank'){
+        chosen = chosen.map((q, idx) => {
+          const correctText = q.options && q.options[q.correct] ? q.options[q.correct] : '?????c quy???n';
+          return {type:'fill_blank', topic:q.topic, q:q.q.replace('?', ' ??? ??i???n kh??i ni???m ho???c ?? ch??nh ph?? h???p:'), answer:correctText, acceptedAnswers:[correctText], explain:q.explain};
+        });
+      }
+      return chosen;
+    }
+    async function readSourceFile(file){
+      if(!file) return '';
+      const status = $('sourceFileStatus');
+      const allowed = ['text/plain','text/markdown','text/html','text/csv'];
+      const extOk = /\.(txt|md|html|csv)$/i.test(file.name);
+      if(!allowed.includes(file.type) && !extOk){
+        if(status) status.textContent = 'File n??y ch??a ?????c tr???c ti???p ???????c. H??y copy n???i dung trong PDF/DOCX/PPTX r???i d??n v??o ?? ngu???n h???c li???u.';
+        return '';
+      }
+      const text = await file.text();
+      if(status) status.textContent = `???? ?????c file: ${file.name}`;
+      return text;
+    }
+    async function startPractice(useAI = true){
+      const status = $('practiceGenerateStatus');
+      const startBtn = $('startPractice');
+      const settings = getPracticeSettings();
+      if(status) status.textContent = useAI ? `AI ??ang t???o ${settings.count} c??u h???i ...` : `??ang t???o ${settings.count} c??u t??? b??? d??? ph??ng...`;
+      if(startBtn) startBtn.disabled = true;
+
+      let generated = null;
+      if(useAI){
+        try{
+          const res = await fetch('/api/generate-quiz', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({count: settings.count, questionType: settings.questionType})
+          });
+          const data = await res.json();
+          if(!res.ok) throw new Error(data.error || 'Kh??ng g???i ???????c AI');
+          if(!Array.isArray(data.questions) || !data.questions.length) throw new Error('AI kh??ng tr??? v??? c??u h???i h???p l???');
+          generated = data.questions.map(normalizePracticeQuestion).filter(validPracticeQuestion);
+          if(status) status.textContent = 'AI ???? t???o c??u h???i d???a tr??n h???c li???u .';
+        }catch(err){
+          console.warn('AI quiz fallback:', err);
+          generated = buildFallbackSet(settings.count, settings.questionType);
+          if(status) status.textContent = 'Kh??ng g???i ???????c AI, ??ang d??ng b??? c??u h???i d??? ph??ng.';
+        }
+      } else {
+        generated = buildFallbackSet(settings.count, settings.questionType);
+      }
+
+      practiceSet = generated.slice(0, settings.count);
+      practiceIndex = 0;
+      practiceScoreValue = 0;
+      practiceAnswered = false;
+      $('practiceSetup').style.display = 'none';
+      $('practiceQuiz').classList.add('show');
+      if($('practiceFeed')) $('practiceFeed').innerHTML = '';
+      $('practiceQuiz').classList.remove('finished');
+      $('practiceScore').textContent = '0';
+      if(startBtn) startBtn.disabled = false;
+      renderPracticeQuestion();
+    }
+    function renderPracticeQuestion(){
+      const item = practiceSet[practiceIndex];
+      practiceAnswered = false;
+      $('practiceCounter').textContent = `C??u ${practiceIndex+1}/${practiceSet.length}`;
+      $('practiceTopic').textContent = item.type === 'fill_blank' ? `${item.topic} ?? ??i???n ch??? tr???ng` : `${item.topic} ?? Multiple choice`;
+      $('practiceQuestion').textContent = item.q;
+      $('practiceQuiz').classList.remove('finished');
+      const prevBtn = $('prevPractice');
+      if(prevBtn) prevBtn.disabled = practiceIndex === 0;
+      $('practiceStatus').textContent = item.type === 'fill_blank' ? 'Nh???p c??u tr??? l???i r???i b???m ki???m tra.' : 'Ch???n ????p ??n ????? ???????c ch???m v?? gi???i th??ch.';
+      $('practiceProgress').style.width = `${Math.round((practiceIndex / practiceSet.length) * 100)}%`;
+      $('aiExplain').classList.remove('show');
+      $('aiExplain').innerHTML = '<b>AI gi???i th??ch</b><p>Tr??? l???i c??u h???i ????? xem gi???i th??ch.</p>';
+      const box = $('practiceOptions');
+      box.innerHTML = '';
+      if(item.type === 'fill_blank'){
+        const wrap = document.createElement('div');
+        wrap.className = 'blank-answer-box';
+        wrap.innerHTML = `<input id="blankAnswerInput" placeholder="Nh???p c??u tr??? l???i c???a b???n..." /><button class="game-btn good" id="checkBlankAnswer">Ki???m tra</button>`;
+        box.appendChild(wrap);
+        setTimeout(() => {
+          const input = $('blankAnswerInput');
+          const btn = $('checkBlankAnswer');
+          if(input) input.addEventListener('keydown', e => { if(e.key === 'Enter') answerBlankPractice(input.value); });
+          if(btn) btn.addEventListener('click', () => answerBlankPractice(input ? input.value : ''));
+        }, 0);
+        return;
+      }
+      item.options.forEach((option, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.textContent = String.fromCharCode(65+i) + '. ' + option;
+        btn.addEventListener('click', () => answerPractice(i));
+        box.appendChild(btn);
+      });
+    }
+    function cleanExplainText(text){
+      return String(text || '')
+        .replace(/^\s*????ng\s+v??\s*/i, '')
+        .replace(/^\s*????ng,?\s*/i, '')
+        .trim();
+    }
+    function cleanAnswer(text){
+      return String(text || '').toLowerCase().normalize('NFD').replace(/[??-??]/g,'').replace(/[^a-z0-9\s]/g,'').replace(/\s+/g,' ').trim();
+    }
+    function answerBlankPractice(value){
+      if(practiceAnswered) return;
+      practiceAnswered = true;
+      const item = practiceSet[practiceIndex];
+      const accepted = (item.acceptedAnswers && item.acceptedAnswers.length ? item.acceptedAnswers : [item.answer]).map(cleanAnswer);
+      const user = cleanAnswer(value);
+      const ok = accepted.some(ans => ans && (user === ans || user.includes(ans) || ans.includes(user)));
+      if(ok){
+        practiceScoreValue++;
+        $('practiceScore').textContent = practiceScoreValue;
+        $('practiceStatus').textContent = 'Ch??nh x??c. Ti???p t???c c??u sau.';
+      } else {
+        $('practiceStatus').textContent = 'Ch??a ????ng. ?????c gi???i th??ch r???i sang c??u ti???p theo.';
+      }
+      const input = $('blankAnswerInput');
+      const btn = $('checkBlankAnswer');
+      if(input) input.disabled = true;
+      if(btn) btn.disabled = true;
+      const correctText = item.answer || (item.acceptedAnswers && item.acceptedAnswers[0]) || '';
+      const explainText = cleanExplainText(item.explain);
+      $('aiExplain').innerHTML = `<b>${ok ? 'Gi???i th??ch: B???n tr??? l???i ????ng' : 'Gi???i th??ch c??u sai'}</b><p>${explainText}</p><p><b>????p ??n g???i ??:</b> ${correctText}</p>`;
+      $('aiExplain').classList.add('show');
+    }
+    function answerPractice(choice){
+      if(practiceAnswered) return;
+      practiceAnswered = true;
+      const item = practiceSet[practiceIndex];
+      const buttons = [...document.querySelectorAll('#practiceOptions .option-btn')];
+      buttons.forEach((btn,i)=>{
+        btn.disabled = true;
+        if(i === item.correct) btn.classList.add('correct');
+        if(i === choice && choice !== item.correct) btn.classList.add('wrong');
+      });
+      const ok = choice === item.correct;
+      if(ok){
+        practiceScoreValue++;
+        $('practiceScore').textContent = practiceScoreValue;
+        $('practiceStatus').textContent = 'Ch??nh x??c. Ti???p t???c c??u sau.';
+      } else {
+        $('practiceStatus').textContent = 'Ch??a ????ng. ?????c gi???i th??ch r???i sang c??u ti???p theo.';
+      }
+      const correctText = item.options[item.correct];
+      const explainText = cleanExplainText(item.explain);
+      $('aiExplain').innerHTML = `<b>${ok ? 'Gi???i th??ch: B???n ch???n ????ng' : 'Gi???i th??ch c??u sai'}</b><p>${explainText}</p><p><b>????p ??n ????ng:</b> ${correctText}</p>`;
+      $('aiExplain').classList.add('show');
+    }
+    function prevPractice(){
+      if(!practiceSet.length || practiceIndex <= 0) return;
+      practiceIndex--;
+      renderPracticeQuestion();
+    }
+    function nextPractice(){
+      if(!practiceSet.length) return;
+      if(practiceIndex >= practiceSet.length - 1){
+        $('practiceProgress').style.width = '100%';
+        $('practiceQuestion').textContent = 'Ho??n th??nh b??i ??n t???p';
+        $('practiceOptions').innerHTML = '';
+        $('practiceQuiz').classList.add('finished');
+        $('practiceResult').textContent = `${practiceScoreValue}/${practiceSet.length}`;
+        $('aiExplain').innerHTML = `<b>K???t qu??? cu???i</b><p>B???n tr??? l???i ????ng ${practiceScoreValue}/${practiceSet.length} c??u.</p>`;
+        $('aiExplain').classList.add('show');
+        $('practiceStatus').textContent = `B???n tr??? l???i ????ng ${practiceScoreValue}/${practiceSet.length} c??u.`;
+        return;
+      }
+      practiceIndex++;
+      renderPracticeQuestion();
+    }
+    function restartPractice(){
+      $('practiceSetup').style.display = 'grid';
+      $('practiceQuiz').classList.remove('show');
+      $('practiceQuiz').classList.remove('finished');
+      practiceSet = [];
+      practiceIndex = 0;
+      practiceScoreValue = 0;
+    }
+
+    function roomRef(code = room){
+      return doc(db, 'mln_rooms', String(code));
+    }
+    function addFeed(){ }
+    async function addRoomFeed(){ }
+    function renderRemoteFeed(){ }
+    function getActivePlayers(list = players){
+      const active = (list || []).filter(p => (p.role || 'player') !== 'host' && (p.role || 'player') !== 'bot');
+      return active.length ? active : (list || []);
+    }
+    function getAnsweredMap(data = roomData){
+      return data && data.answeredPlayers ? data.answeredPlayers : {};
+    }
+    function playerHasAnswered(id = localPlayerId, data = roomData){
+      return !!getAnsweredMap(data)[id];
+    }
+    function setAnswerDisabled(disabled){
+      const input = $('answerInput');
+      const btn = $('submitAnswer');
+      if(input) input.disabled = disabled;
+      document.querySelectorAll('#answerBoxes .letter-input').forEach(el => {
+        if(!el.closest('.letter-box')?.classList.contains('revealed')) el.disabled = disabled;
+      });
+      if(btn) btn.disabled = disabled;
+    }
+    function sortedPlayers(list = players){
+      return [...(list || [])]
+        .filter(p => (p.role || 'player') !== 'host' && (p.role || 'player') !== 'bot')
+        .sort((a,b)=>b.score-a.score);
+    }
+    function updateStageLayout(){
+      const stage = $('gameStage');
+      if(!stage) return;
+      const questionMode = roomData?.status === 'playing' && (roomData?.phase || 'question') === 'question';
+      stage.classList.toggle('player-view', currentRole === 'player' && questionMode);
+      stage.classList.toggle('host-view', currentRole === 'host' && questionMode);
+      const hostSide = $('hostSidePanel');
+      if(hostSide) hostSide.style.display = currentRole === 'host' ? 'grid' : 'none';
+    }
+    function renderPlayers(){
+      const list = $('playerList');
+      if(list){
+        list.innerHTML = '';
+        const realPlayers = players.filter(p => (p.role || 'player') !== 'host' && (p.role || 'player') !== 'bot');
+        if(!realPlayers.length){
+          const empty = document.createElement('div');
+          empty.className = 'player';
+          empty.innerHTML = '<span>Ch??a c?? ng?????i ch??i tham gia</span><b>0</b>';
+          list.appendChild(empty);
+        }else{
+          realPlayers.forEach(p => {
+            const row = document.createElement('div');
+            row.className = 'player';
+            row.innerHTML = `<span>${p.name}</span><b>${p.score}</b>`;
+            list.appendChild(row);
+          });
+        }
+      }
+      renderLeaderboard();
+      renderRoundLeaderboard();
+      renderFinalLeaderboard();
+    }
+    function renderLeaderboard(){
+      const board = $('leaderboard');
+      if(!board) return;
+      board.innerHTML = '';
+      sortedPlayers(players).forEach((p,i)=>{
+        const row = document.createElement('div');
+        row.className = 'rank' + (p.me ? ' me' : '');
+        row.innerHTML = `<span>#${i+1} ${p.name}</span><span>${p.score}</span>`;
+        board.appendChild(row);
+      });
+    }
+    function renderRoundLeaderboard(){
+      const board = $('roundLeaderboard');
+      if(!board) return;
+      board.innerHTML = '';
+      const top = sortedPlayers(players).slice(0,5);
+      if(!top.length){
+        board.innerHTML = '<div class="rank"><span>Ch??a c?? d??? li???u</span><span>0</span></div>';
+        return;
+      }
+      top.forEach((p,i)=>{
+        const row = document.createElement('div');
+        row.className = 'rank' + (p.me ? ' me' : '');
+        row.innerHTML = `<span>#${i+1} ${p.name}</span><span>${p.score}</span>`;
+        board.appendChild(row);
+      });
+    }
+    function renderFinalLeaderboard(){
+      const board = $('finalLeaderboard');
+      if(!board) return;
+      board.innerHTML = '';
+      const ordered = sortedPlayers(players).slice(0,3);
+      if(!ordered.length){
+        board.innerHTML = '<div class="rank"><span>Ch??a c?? d??? li???u</span><span>0</span></div>';
+        return;
+      }
+      ordered.forEach((p,i)=>{
+        const row = document.createElement('div');
+        row.className = 'rank' + (p.me ? ' me' : '');
+        row.innerHTML = `<span>#${i+1} ${p.name}</span><span>${p.score}</span>`;
+        board.appendChild(row);
+      });
+    }
+    function setQuestionSummaryVisible(show, note = ''){
+      const card = $('roundSummaryCard');
+      if(!card) return;
+      card.classList.toggle('show', !!show);
+      $('roundSummaryTitle').textContent = `Top 5 sau c??u ${Math.min(round + 1, puzzles.length)}`;
+      if(note) $('roundSummaryNote').textContent = note;
+    }
+    function showFinalLeaderboard(show){
+      const stage = $('gameStage');
+      const card = $('finalLeaderboardCard');
+      if(stage) stage.classList.toggle('show-final', !!show);
+      if(card) card.classList.toggle('show', !!show);
+      renderFinalLeaderboard();
+    }
+    function updateHostProgress(){
+      const hostProgress = $('hostProgressText');
+      if(!hostProgress) return;
+      if(roomData?.status === 'waiting'){
+        hostProgress.textContent = '??ang ch??? b???t ?????u';
+        return;
+      }
+      if(roomData?.status === 'finished'){
+        hostProgress.textContent = '???? ho??n th??nh 10/10 c??u';
+        return;
+      }
+      const active = getActivePlayers(players);
+      const answeredCount = Object.keys(getAnsweredMap(roomData)).length;
+      hostProgress.textContent = `???? tr??? l???i: ${answeredCount}/${active.length || 0} ng?????i ch??i`;
+    }
+    function showRoleForm(role){
+      $('hostForm')?.classList.toggle('show', role === 'host');
+      $('playerForm')?.classList.toggle('show', role === 'player');
+    }
+    function showLobby(role){
+      $('roleScreen')?.classList.add('hidden');
+      $('roleScreen').style.display = 'none';
+      $('roomLobby')?.classList.add('show');
+      $('gameStage')?.classList.remove('show');
+      currentRole = role;
+      $('roleBadge').textContent = role === 'host' ? 'Qu???n tr??' : 'Ng?????i ch??i';
+      const startLobby = $('startGameLobby');
+      if(startLobby){
+        startLobby.style.display = role === 'host' ? 'inline-flex' : 'none';
+        startLobby.textContent = 'B???t ?????u game';
+      }
+      const startCardBtn = $('startGame');
+      if(startCardBtn) startCardBtn.style.display = role === 'host' ? 'inline-flex' : 'none';
+      const addBotBtn = $('addBot');
+      if(addBotBtn) addBotBtn.style.display = 'none';
+    }
+    function ensureRoom(){
+      if(room) return true;
+      showRoleForm('host');
+      $('statusText').textContent = 'H??y t???o ph??ng ho???c tham gia ph??ng tr?????c khi b???t ?????u.';
+      return false;
+    }
+    function generateRoomCode(){
+      return String(Math.floor(1000 + Math.random() * 9000));
+    }
+    function getRoomPlayers(data){
+      const obj = data && data.players ? data.players : {};
+      return Object.entries(obj).map(([id, p]) => ({ id, name: p.name || 'B???n', score: Number(p.score || 0), role: p.role || 'player', me: id === localPlayerId }));
+    }
+    function listenToRoom(code){
+      if(unsubscribeRoom) unsubscribeRoom();
+      unsubscribeRoom = onSnapshot(roomRef(code), snap => {
+        if(!snap.exists()){
+          $('statusText').textContent = 'Kh??ng t??m th???y ph??ng ho???c ph??ng ???? b??? x??a.';
+          return;
+        }
+        const prevPhase = currentPhase;
+        const prevRound = round;
+        roomData = snap.data();
+        room = code;
+        currentPhase = roomData.phase || (roomData.status === 'finished' ? 'finished' : 'question');
+        players = getRoomPlayers(roomData);
+        const me = players.find(p => p.me);
+        if(me) score = me.score;
+        $('roomCode').textContent = room;
+        $('lobbyTitle').textContent = roomData.roomName || ('Ph??ng ' + room);
+        renderPlayers();
+        updateHostProgress();
+        updateStageLayout();
+
+        if(roomData.status === 'waiting'){
+          clearInterval(timer);
+          clearTimeout(reviewTimer);
+          playing = false;
+          showFinalLeaderboard(false);
+          setQuestionSummaryVisible(false);
+          $('roomLobby')?.classList.add('show');
+          $('gameStage')?.classList.remove('show');
+          $('lobbyDesc').textContent = currentRole === 'host'
+            ? 'Chia s??? m?? ph??ng cho ng?????i ch??i. Khi ????? ng?????i, qu???n tr?? b???m ???B???t ?????u game???.'
+            : 'B???n ???? v??o ph??ng. Ch??? qu???n tr?? b???t ?????u tr?? ch??i.';
+          $('statusText').textContent = currentRole === 'host'
+            ? 'Ph??ng ???? s???n s??ng. B???m ???B???t ?????u game??? khi mu???n b???t ?????u.'
+            : '???? tham gia ph??ng. Ch??? qu???n tr?? b???t ?????u.';
+          return;
+        }
+
+        if(roomData.status === 'playing'){
+          const remoteRound = Number(roomData.currentQuestion || 0);
+          let startMs = Number(roomData.questionStartedAtMs || 0);
+          if(!startMs && roomData.questionStartedAt?.toMillis) startMs = roomData.questionStartedAt.toMillis();
+          if(!startMs || startMs > Date.now() + 1000) startMs = Date.now();
+          $('roomLobby')?.classList.remove('show');
+          $('gameStage')?.classList.add('show');
+          updateStageLayout();
+
+          if(currentPhase === 'question'){
+            clearTimeout(reviewTimer);
+            showFinalLeaderboard(false);
+            setQuestionSummaryVisible(false);
+            if(!playing || remoteRound !== prevRound || prevPhase !== 'question'){
+              beginRemoteGame(remoteRound, startMs);
+            } else {
+              round = remoteRound;
+              const puzzle = puzzles[round];
+              if(puzzle) renderAnswerBoxes(puzzle.answer, $('answerInput')?.value || '', getRevealCount(puzzle.answer, timeLeft));
+            }
+            const answered = playerHasAnswered(localPlayerId, roomData);
+            setAnswerDisabled(answered);
+            $('answerState').textContent = '';
+            $('statusText').textContent = currentRole === 'host'
+              ? '??ang trong c??u h???i. Khi t???t c??? ng?????i ch??i tr??? l???i ho???c h???t gi???, h??? th???ng s??? hi???n top 5.'
+              : answered ? 'B???n ???? tr??? l???i xong. ??ang ch??? c??c ng?????i ch??i kh??c.' : 'H??y nh???p ????p ??n tr?????c khi h???t gi???.';
+            updateHostProgress();
+            if(playing && !timer){
+              timer = setInterval(updateTimer, 250);
+            }
+            const activePlayers = getActivePlayers(players);
+            const answeredCount = Object.keys(getAnsweredMap(roomData)).length;
+            if(currentRole === 'host' && activePlayers.length && answeredCount >= activePlayers.length){
+              openRoundReview(`T???t c??? ng?????i ch??i ???? ho??n th??nh c??u ${remoteRound+1}.`);
+            }
+          }
+
+          if(currentPhase === 'review'){
+            playing = false;
+            clearInterval(timer);
+            setAnswerDisabled(true);
+            setQuestionSummaryVisible(true, roomData.reviewMessage || '???? ho??n th??nh c??u n??y. Chu???n b??? chuy???n sang c??u ti???p theo...');
+            renderRoundLeaderboard();
+            $('statusText').textContent = currentRole === 'host'
+              ? '??ang hi???n th??? top 5 c???a c??u n??y.'
+              : '??ang hi???n th??? top 5 sau c??u v???a r???i.';
+            if(currentRole === 'host' && (prevPhase !== 'review' || prevRound !== remoteRound)){
+              clearTimeout(reviewTimer);
+              reviewTimer = setTimeout(() => advanceAfterReview(), REVIEW_TIME * 1000);
+            }
+          }
+          return;
+        }
+
+        if(roomData.status === 'finished'){
+          playing = false;
+          clearInterval(timer);
+          clearTimeout(reviewTimer);
+          $('roomLobby')?.classList.remove('show');
+          $('gameStage')?.classList.add('show');
+          setQuestionSummaryVisible(false);
+          showFinalLeaderboard(true);
+          $('statusText').textContent = 'Game ???? k???t th??c. ????y l?? b???ng x???p h???ng cu???i c??ng.';
+          updateHostProgress();
+        }
+      }, err => {
+        console.error(err);
+        $('statusText').textContent = 'Kh??ng k???t n???i ???????c Firebase. Ki???m tra Firestore ???? b???t v?? rules cho ph??p ?????c/ghi.';
+      });
+    }
+    async function createRoom(){
+      const roomName = $('hostRoomName').value.trim() || 'Ph??ng ??n t???p MLN';
+      const host = 'Qu???n tr??';
+      localPlayerName = host;
+      room = generateRoomCode();
+      players = [{id:localPlayerId, name:host, score:0, role:'host', me:true}];
+      $('roomCode').textContent = room;
+      $('lobbyTitle').textContent = roomName;
+      $('lobbyDesc').textContent = '??ang t???o ph??ng...';
+      $('statusText').textContent = '??ang k???t n???i Firebase...';
+      showLobby('host');
+      try{
+        await setDoc(roomRef(), {
+          code: room,
+          roomName,
+          hostId: localPlayerId,
+          hostName: host,
+          status: 'waiting',
+          currentQuestion: 0,
+          questionStartedAt: null,
+          players: {
+            [localPlayerId]: { name: host, score: 0, role: 'host', joinedAt: Date.now() }
+          },
+          answeredPlayers: {},
+          phase: 'question',
+          createdAt: serverTimestamp()
+        });
+        listenToRoom(room);
+      }catch(err){
+        console.error(err);
+        $('statusText').textContent = 'T???o ph??ng th???t b???i. H??y b???t Cloud Firestore v?? ????? rules test mode khi demo.';
+      }
+    }
+    async function joinRoom(){
+      const code = ($('roomInput').value.trim() || '').toUpperCase();
+      const name = $('playerName').value.trim() || 'B???n';
+      if(!code){ $('statusText').textContent = 'Nh???p m?? ph??ng tr?????c khi tham gia.'; return; }
+      localPlayerName = name;
+      room = code;
+      $('roomCode').textContent = room;
+      $('lobbyTitle').textContent = 'Ph??ng ' + room;
+      $('lobbyDesc').textContent = '??ang tham gia ph??ng...';
+      $('statusText').textContent = '??ang k???t n???i Firebase...';
+      showLobby('player');
+      try{
+        const ref = roomRef(room);
+        const snap = await getDoc(ref);
+        if(!snap.exists()){
+          $('statusText').textContent = 'Kh??ng t??m th???y ph??ng. Ki???m tra l???i m?? ph??ng.';
+          return;
+        }
+        await updateDoc(ref, {
+          [`players.${localPlayerId}`]: { name, score: 0, role: 'player', joinedAt: Date.now() },
+          updatedAt: Date.now()
+        });
+        listenToRoom(room);
+      }catch(err){
+        console.error(err);
+        $('statusText').textContent = 'Tham gia ph??ng th???t b???i. Ki???m tra Firestore rules v?? m?? ph??ng.';
+      }
+    }
+    async function addBot(){
+      if(!room) return;
+      const names = ['Lan', 'Minh', 'Qu???c', 'Vy', 'Khoa', 'An'];
+      const name = names[Math.floor(Math.random()*names.length)] + ' AI';
+      const botId = 'bot_' + Math.random().toString(36).slice(2,8);
+      try{
+        await updateDoc(roomRef(), {
+          [`players.${botId}`]: { name, score: Math.max(0, score - Math.floor(Math.random()*140)), role: 'player', joinedAt: Date.now() },
+          updatedAt: Date.now()
+        });
+      }catch(err){
+        console.warn(err);
+      }
+    }
+    let questionStartMs = Date.now();
+    let revealedIndexes = new Set();
+    let revealOrder = [];
+    let lastRevealStep = 0;
+    function getLetterCount(answer){
+      return answerLetters(answer).filter(ch => ch !== ' ').length;
+    }
+    function getRevealCount(answer, secondsLeft){
+      const totalLetters = getLetterCount(answer);
+      if(totalLetters <= 1) return 0;
+      if(secondsLeft <= 0) return totalLetters;
+
+      if(secondsLeft > 25) return 0;
+
+      let count = 0;
+
+      // 25s -> 20s: m??? ch???m, m???i m???c 5s kho???ng 1 ch???.
+      count += Math.max(0, Math.floor((25 - secondsLeft) / 5) + 1);
+
+      // T??? 15s tr??? xu???ng: t??ng nh???p, m???i m???c 5s m??? th??m 1-2 ch???.
+      if(secondsLeft <= 15){
+        const fastSteps = Math.floor((15 - secondsLeft) / 5) + 1;
+        for(let i = 1; i <= fastSteps; i++){
+          count += i % 2 === 0 ? 2 : 1;
+        }
+      }
+
+      return Math.min(totalLetters, count);
+    }
+    function updateTimer(){
+      if(playing){
+        const elapsed = Math.max(0, Math.floor((Date.now() - questionStartMs) / 1000));
+        timeLeft = Math.max(0, QUESTION_TIME - elapsed);
+      }
+
+      const pct = Math.max(0, Math.round((timeLeft / QUESTION_TIME) * 100));
+      $('timerText').textContent = timeLeft + 's';
+      $('timerRing').style.setProperty('--progress', pct + '%');
+
+      const points = Math.max(0, Math.round(timeLeft * 5));
+      $('currentPoint').textContent = points;
+
+      const puzzle = puzzles[round];
+      if(puzzle){
+        renderAnswerBoxes(puzzle.answer, $('answerInput')?.value || '', getRevealCount(puzzle.answer, timeLeft));
+      }
+
+      if(timeLeft <= 0 && playing){
+        if(currentRole === 'host'){
+          openRoundReview(`H???t gi??? c??u ${round+1}.`);
+        }else{
+          setAnswerDisabled(true);
+          $('answerState').textContent = `H???t gi???. ????p ??n: ${puzzle ? puzzle.answer : ''}`;
+          renderAnswerBoxes(puzzle.answer, puzzle.answer, getLetterCount(puzzle.answer));
+        }
+      }
+    }
+
+    function answerLetters(answer){
+      return [...String(answer || '').toUpperCase()];
+    }
+    function makeRevealOrder(answer){
+      const indexes = [];
+      let letterIndex = 0;
+      answerLetters(answer).forEach(ch => {
+        if(ch !== ' ') indexes.push(letterIndex);
+        if(ch !== ' ') letterIndex++;
+      });
+
+      // X??o tr???n ????? ch??? g???i ?? hi???n ng???u nhi??n, kh??ng ch???y t??? tr??i sang ph???i.
+      for(let i = indexes.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [indexes[i], indexes[j]] = [indexes[j], indexes[i]];
+      }
+      return indexes;
+    }
+    function renderAnswerBoxes(answer, typed = '', revealCount = 0){
+      const box = $('answerBoxes');
+      if(!box) return;
+
+      const chars = answerLetters(answer);
+      const typedChars = [...String(typed || '').toUpperCase().replace(/\s+/g,'')];
+      const revealed = new Set((revealOrder || []).slice(0, revealCount));
+      let typedIndex = 0;
+      let letterIndex = 0;
+
+      box.innerHTML = '';
+      chars.forEach(ch => {
+        if(ch === ' '){
+          const sp = document.createElement('span');
+          sp.className = 'letter-space';
+          box.appendChild(sp);
+          return;
+        }
+
+        const cell = document.createElement('span');
+        cell.className = 'letter-box';
+
+        const typedChar = typedChars[typedIndex] || '';
+        if(typedChar){
+          cell.textContent = typedChar;
+        }else if(revealed.has(letterIndex)){
+          cell.textContent = ch;
+          cell.classList.add('revealed');
+        }else{
+          cell.textContent = '';
+          cell.classList.add('blank');
+        }
+
+        box.appendChild(cell);
+        typedIndex++;
+        letterIndex++;
+      });
+    }
+    function loadRound(startMs = Date.now()){
+      const puzzle = puzzles[round];
+      questionStartMs = startMs;
+      revealedIndexes = new Set();
+      revealOrder = makeRevealOrder(puzzle.answer);
+      lastRevealStep = 0;
+      timeLeft = Math.max(0, QUESTION_TIME - Math.max(0, Math.floor((Date.now() - questionStartMs) / 1000)));
+      $('roundBadge').textContent = `C??u ${round+1}/${puzzles.length}`;
+      $('categoryBadge').textContent = puzzle.category;
+      const frame = document.querySelector('.puzzle-frame');
+      const img = $('puzzleImage');
+      const art = $('puzzleArt');
+      if(puzzle.image && img){
+        img.src = puzzle.image;
+        img.alt = '???nh minh h???a cho c??u h???i ' + (round + 1);
+        img.classList.add('show');
+        if(frame) frame.classList.add('has-image');
+        if(art) art.style.display = 'none';
+        img.onerror = () => {
+          img.classList.remove('show');
+          if(frame) frame.classList.remove('has-image');
+          if(art){ art.style.display = 'block'; art.textContent = puzzle.art || '????'; }
+        };
+      } else {
+        if(img) img.classList.remove('show');
+        if(frame) frame.classList.remove('has-image');
+        if(art){ art.style.display = 'block'; art.textContent = puzzle.art || '????'; }
+      }
+      $('puzzleQuestion').textContent = puzzle.question || 'Nh??n h??nh v?? ??o??n kh??i ni???m.';
+      $('hintBox').innerHTML = '<b>???? G???i ??:</b> ' + puzzle.hint;
+      $('answerInput').value = '';
+      const answerBox = $('answerBoxes');
+      if(answerBox) answerBox.innerHTML = '';
+      setAnswerDisabled(currentRole === 'host');
+      $('answerState').textContent = currentRole === 'host' ? '' : 'Nh???p ????p ??n r???i b???m Tr??? l???i.';
+      renderAnswerBoxes(puzzle.answer, '', getRevealCount(puzzle.answer, timeLeft));
+      updateTimer();
+      setTimeout(() => {
+        if(currentRole !== 'host') $('answerInput')?.focus();
+      }, 80);
+    }
+    async function startGame(){
+      if(!ensureRoom()) return;
+      if(currentRole !== 'host'){
+        $('statusText').textContent = '??ang ch??? qu???n tr?? b???m b???t ?????u game.';
+        return;
+      }
+      const resetPlayers = {};
+      players.forEach(p => resetPlayers[p.id] = { name: p.name, score: 0, role: p.role || 'player', joinedAt: Date.now() });
+      try{
+        await updateDoc(roomRef(), {
+          status: 'playing',
+          phase: 'question',
+          currentQuestion: 0,
+          questionStartedAt: serverTimestamp(),
+          questionStartedAtMs: Date.now(),
+          answeredPlayers: {},
+          reviewStartedAt: null,
+          reviewMessage: 'Chu???n b??? c??u ?????u ti??n.',
+          players: resetPlayers
+        });
+      }catch(err){
+        console.error(err);
+        $('statusText').textContent = 'Kh??ng b???t ?????u ???????c game. Ki???m tra k???t n???i Firebase.';
+      }
+    }
+    function beginRemoteGame(remoteRound, startMs){
+      $('roomLobby')?.classList.remove('show');
+      $('gameStage')?.classList.add('show');
+      round = remoteRound;
+      playing = true;
+      revealedIndexes = new Set();
+      revealOrder = [];
+      lastRevealStep = 0;
+      clearInterval(timer);
+      loadRound(startMs || Date.now());
+      timer = setInterval(updateTimer, 250);
+      updateStageLayout();
+      if(currentRole === 'host') setAnswerDisabled(true);
+      renderPlayers();
+      updateHostProgress();
+    }
+    function correctEffect(){
+      const box = $('confetti');
+      box.innerHTML = '';
+      for(let i=0;i<26;i++){
+        const c=document.createElement('i');
+        c.style.left=Math.random()*100+'%';
+        c.style.background=['#39e5ff','#46a6ff','#ffd166','#5ee0a0','#8d7cff'][i%5];
+        c.style.animationDelay=(Math.random()*.25)+'s';
+        box.appendChild(c);
+      }
+      setTimeout(()=>box.innerHTML='',1500);
+    }
+    async function openRoundReview(message){
+      if(!room || !roomData || (roomData.phase || 'question') === 'review') return;
+      try{
+        await updateDoc(roomRef(), {
+          phase: 'review',
+          reviewStartedAt: serverTimestamp(),
+          reviewMessage: message || `???? ho??n th??nh c??u ${round+1}.`
+        });
+      }catch(err){
+        console.warn('Kh??ng m??? ???????c m??n top 5:', err);
+      }
+    }
+    async function submitAnswer(){
+      if(currentRole === 'host'){
+        $('statusText').textContent = 'Qu???n tr?? ch??? ??i???u khi???n game, kh??ng tr??? l???i c??u h???i.';
+        return;
+      }
+      if(!playing || !roomData) return;
+      if(playerHasAnswered(localPlayerId, roomData)){
+        $('statusText').textContent = 'B???n ???? tr??? l???i c??u n??y r???i.';
+        return;
+      }
+      updateTimer();
+      const puzzle = puzzles[round];
+      if(timeLeft <= 0){
+        $('statusText').textContent = 'H???t gi???.';
+        $('answerState').textContent = `H???t gi???. ????p ??n: ${puzzle.answer}`;
+        setAnswerDisabled(true);
+        renderAnswerBoxes(puzzle.answer, puzzle.answer, getLetterCount(puzzle.answer));
+        return;
+      }
+
+      const rawAnswer = $('answerInput').value.trim();
+      const ok = normalizeAnswer(rawAnswer) === normalizeAnswer(puzzle.answer);
+      if(!ok){
+        $('statusText').textContent = 'Ch??a ????ng, th??? l???i tr?????c khi h???t gi???.';
+        $('answerState').textContent = 'Sai r???i, nh???p l???i nhanh nh??.';
+        $('answerInput')?.focus();
+        return;
+      }
+
+      const earned = Math.max(0, Math.round(timeLeft * 5));
+      const currentMe = players.find(p => p.me) || { name: localPlayerName || 'B???n', role: currentRole || 'player', score: 0 };
+      const newScore = Number(currentMe.score || 0) + earned;
+      const localPlayer = players.find(p => p.id === localPlayerId);
+      if(localPlayer) localPlayer.score = newScore;
+      renderPlayers();
+      $('currentPoint').textContent = earned;
+      $('statusText').textContent = `Ch??nh x??c. +${earned} ??i???m.`;
+      $('answerState').textContent = `????ng r???i. ????p ??n: ${puzzle.answer}. B???n nh???n ${earned} ??i???m.`;
+      renderAnswerBoxes(puzzle.answer, puzzle.answer, getLetterCount(puzzle.answer));
+      setAnswerDisabled(true);
+      correctEffect();
+      try{
+        await updateDoc(roomRef(), {
+          [`players.${localPlayerId}`]: { name: currentMe.name, score: newScore, role: currentMe.role || currentRole || 'player', joinedAt: Date.now() },
+          [`answeredPlayers.${localPlayerId}`]: { correct: true, earned, at: Date.now(), question: round }
+        });
+        if(currentRole === 'host' && getActivePlayers(players).length <= 1){
+          await openRoundReview(`Ho??n th??nh c??u ${round+1}.`);
+        }
+      }catch(err){
+        console.error(err);
+        $('statusText').textContent = '????ng nh??ng ch??a ?????ng b??? ???????c ??i???m. Ki???m tra k???t n???i Firebase.';
+      }
+    }
+    async function advanceAfterReview(){
+      if(currentRole !== 'host') return;
+      const next = round + 1;
+      try{
+        if(next >= puzzles.length){
+          await updateDoc(roomRef(), {
+            status: 'finished',
+            phase: 'finished'
+          });
+        }else{
+          await updateDoc(roomRef(), {
+            status: 'playing',
+            phase: 'question',
+            currentQuestion: next,
+            questionStartedAt: serverTimestamp(),
+            questionStartedAtMs: Date.now(),
+            answeredPlayers: {},
+            reviewStartedAt: null,
+            reviewMessage: `Chu???n b??? c??u ${next+1}.`
+          });
+        }
+      }catch(err){
+        console.warn('Kh??ng chuy???n sang c??u ti???p theo ???????c:', err);
+      }
+    }
+    async function resetGame(){
+      if(!room) return;
+      clearInterval(timer);
+      clearTimeout(reviewTimer);
+      playing = false;
+      score = 0; round = 0; timeLeft = QUESTION_TIME;
+      $('timerText').textContent = QUESTION_TIME + 's';
+      $('timerRing').style.setProperty('--progress','100%');
+      $('currentPoint').textContent = '100';
+      const resetPlayers = {};
+      players.forEach(p => resetPlayers[p.id] = { name: p.name, score: 0, role: p.role || 'player', joinedAt: Date.now() });
+      try{
+        await updateDoc(roomRef(), {
+          status: 'waiting',
+          phase: 'question',
+          currentQuestion: 0,
+          questionStartedAt: null,
+          questionStartedAtMs: null,
+          answeredPlayers: {},
+          reviewStartedAt: null,
+          reviewMessage: '',
+          players: resetPlayers
+        });
+        showFinalLeaderboard(false);
+      }catch(err){
+        console.warn(err);
+      }
+    }
+
+    document.querySelectorAll('.game-mode-btn').forEach(btn => btn.addEventListener('click', () => switchGameMode(btn.dataset.gameMode)));
+    document.querySelectorAll('.mode-back').forEach(btn => btn.addEventListener('click', backToGameModeSelector));
+    document.querySelectorAll('.count-btn').forEach(btn => btn.addEventListener('click', () => setPracticeCount(Number(btn.dataset.count))));
+    $('startPractice')?.addEventListener('click', () => startPractice(true));
+    $('useDefaultPractice')?.addEventListener('click', () => startPractice(false));
+    $('prevPractice')?.addEventListener('click', prevPractice);
+    $('nextPractice')?.addEventListener('click', nextPractice);
+    $('restartPractice')?.addEventListener('click', restartPractice);
+
+    const createRoomBtn = $('createRoom');
+    if(createRoomBtn){
+      $('chooseHost').addEventListener('click', () => showRoleForm('host'));
+      $('choosePlayer').addEventListener('click', () => showRoleForm('player'));
+      createRoomBtn.addEventListener('click', createRoom);
+      $('joinRoom').addEventListener('click', joinRoom);
+      $('startGameLobby').addEventListener('click', startGame);
+      $('startGame').addEventListener('click', startGame);
+      $('resetGame').addEventListener('click', resetGame);
+      $('submitAnswer').addEventListener('click', submitAnswer);
+      $('answerInput').addEventListener('keydown', e => { if(e.key === 'Enter') submitAnswer(); });
+      $('answerInput').addEventListener('input', e => {
+        const puzzle = puzzles[round];
+        if(puzzle) renderAnswerBoxes(puzzle.answer, e.target.value, getRevealCount(puzzle.answer, timeLeft));
+      });
+      $('hostRoomName').value = '';
+      $('playerName').value = '';
+      renderPlayers();
+      loadRound();
+    }
+  </script>

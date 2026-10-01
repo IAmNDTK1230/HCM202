@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MLN122 · Nguyên tắc đoàn kết quốc tế</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap');
+
+    :root {
+      --bg: #0a0c12;
+      --surface-1: #111318;
+      --surface-2: #181b24;
+      --surface-3: #1f2330;
+      --border: rgba(255,255,255,0.06);
+      --border-hover: rgba(255,255,255,0.12);
+      --text: #eeeef2;
+      --text-secondary: #9295a8;
+      --primary: #7c6cf6;
+      --primary-soft: rgba(124,108,246,0.12);
+      --accent: #00e5a0;
+      --accent-soft: rgba(0,229,160,0.10);
+      --gold: #ffb800;
+      --red: #ff4d6b;
+      --blue: #4d9fff;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: "Be Vietnam Pro", system-ui, sans-serif;
+      background-color: var(--bg);
+      background-image: radial-gradient(circle at 50% 0%, rgba(124,108,246,0.08), transparent 60%);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+      animation: slideUp 0.6s ease-out;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(255,77,107,0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(255,77,107,0); }
+      100% { box-shadow: 0 0 0 0 rgba(255,77,107,0); }
+    }
+    @keyframes popIn {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    header {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(10, 12, 18, 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav {
+      max-width: 1200px; margin: 0 auto;
+      height: 64px; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .logo {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: var(--primary); display: grid; place-items: center;
+      font-weight: 800; color: #fff; font-size: 14px;
+    }
+    .brand-title { font-weight: 800; font-size: 14px; }
+    .brand-sub { font-size: 11px; color: var(--text-secondary); }
+    
+    .nav-tabs { display: flex; gap: 8px; }
+    .tab-btn {
+      background: var(--surface-2); border: 1px solid var(--border);
+      color: var(--text-secondary); padding: 8px 16px; border-radius: 999px;
+      font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .tab-btn:hover { background: var(--surface-3); color: var(--text); }
+    .tab-btn.active {
+      background: var(--primary); border-color: var(--primary);
+      color: #fff;
+    }
+
+    main { max-width: 1200px; margin: 0 auto; padding: 40px 24px; }
+    
+    /* Hero */
+    .hero { text-align: center; margin-bottom: 48px; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 12px; border-radius: 999px;
+      background: var(--primary-soft); color: var(--primary);
+      font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+    .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--primary); }
+    h1 { font-size: clamp(32px, 5vw, 48px); font-weight: 900; line-height: 1.1; margin-bottom: 16px; letter-spacing: -1px; }
+    .accent-text { color: var(--primary); }
+    .lead { color: var(--text-secondary); max-width: 600px; margin: 0 auto 24px; font-size: 16px; }
+    .hero-stats { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+    .hero-stats div {
+      background: var(--surface-1); border: 1px solid var(--border);
+      padding: 12px 24px; border-radius: 16px; display: flex; flex-direction: column;
+      min-width: 120px;
+    }
+    .hero-stats b { font-size: 24px; color: var(--text); font-weight: 800; }
+    .hero-stats span { font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+
+    /* Quick Actions */
+    .quick-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 48px; }
+    .action-card {
+      background: var(--surface-1); border: 1px solid var(--border);
+      border-radius: 20px; padding: 24px; text-align: left;
+      cursor: pointer; transition: all 0.2s ease;
+      display: flex; flex-direction: column;
+    }
+    .action-card:hover { transform: translateY(-4px); border-color: var(--border-hover); background: var(--surface-2); box-shadow: 0 12px 24px rgba(0,0,0,0.2); }
+    .action-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      display: grid; place-items: center; font-size: 24px; margin-bottom: 16px;
+    }
+    .action-host .action-icon { background: var(--primary-soft); color: var(--primary); }
+    .action-join .action-icon { background: rgba(255,184,0,0.1); color: var(--gold); }
+    .action-ai .action-icon { background: var(--accent-soft); color: var(--accent); }
+    .action-tag { font-size: 10px; font-weight: 800; letter-spacing: 1px; margin-bottom: 8px; }
+    .action-host .action-tag { color: var(--primary); }
+    .action-join .action-tag { color: var(--gold); }
+    .action-ai .action-tag { color: var(--accent); }
+    .action-card strong { font-size: 18px; margin-bottom: 8px; color: var(--text); font-weight: 700; }
+    .action-card p { color: var(--text-secondary); font-size: 13px; margin-bottom: 16px; flex-grow: 1; }
+    .action-link { font-size: 13px; font-weight: 600; color: var(--text); opacity: 0.7; }
+    .action-card:hover .action-link { opacity: 1; }
+
+    /* Game Area */
+    .surface {
+      background: var(--surface-1); border: 1px solid var(--border);
+      border-radius: 24px; padding: 32px;
+    }
+    .section-head { margin-bottom: 24px; }
+    .kicker { font-size: 12px; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    h2 { font-size: 28px; font-weight: 800; }
+    
+    .game-mode-tabs { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; justify-content: center; background: var(--surface-2); padding: 8px; border-radius: 16px; width: fit-content; margin: 0 auto 32px; }
+    .game-mode-btn {
+      background: transparent; border: none; color: var(--text-secondary);
+      padding: 10px 20px; border-radius: 12px; font-family: inherit; font-weight: 600; font-size: 14px;
+      cursor: pointer; transition: 0.2s ease;
+    }
+    .game-mode-btn:hover { color: var(--text); }
+    .game-mode-btn.active { background: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(124,108,246,0.3); }
+    
+    .game-mode-panel { display: none; animation: slideUp 0.3s ease; }
+    .game-mode-panel.show { display: block; }
+    
+    .game-btn {
+      background: var(--primary); color: #fff; border: none;
+      padding: 12px 24px; border-radius: 12px; font-family: inherit; font-weight: 700; font-size: 14px;
+      cursor: pointer; transition: 0.2s ease; display: inline-flex; justify-content: center; align-items: center;
+    }
+    .game-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+    .game-btn:active { transform: translateY(1px); }
+    .game-btn.alt { background: var(--surface-2); border: 1px solid var(--border); color: var(--text); }
+    .game-btn.alt:hover { background: var(--surface-3); }
+    .game-btn.good { background: var(--accent); color: #000; }
+    
+    .mode-back { margin-bottom: 24px; }
+
+    /* Roles */
+    .role-screen { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .role-card {
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 20px; padding: 32px; text-align: center;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .role-icon { font-size: 48px; margin-bottom: 16px; width: 80px; height: 80px; display: grid; place-items: center; border-radius: 50%; background: var(--surface-3); }
+    .role-card h3 { font-size: 24px; margin-bottom: 12px; }
+    .role-card p { color: var(--text-secondary); margin-bottom: 24px; font-size: 14px; }
+    .role-select {
+      width: 100%; background: var(--primary); color: #fff; border: none;
+      padding: 14px; border-radius: 12px; font-family: inherit; font-weight: 700; font-size: 15px;
+      cursor: pointer; transition: 0.2s ease;
+    }
+    .role-select.amber { background: var(--gold); color: #000; }
+    .amber-btn { background: var(--gold) !important; color: #000 !important; }
+    .role-select:hover { filter: brightness(1.1); }
+    
+    .role-form { width: 100%; display: none; flex-direction: column; gap: 12px; margin-top: 24px; }
+    .role-form.show { display: flex; }
+    .room-input {
+      width: 100%; background: var(--surface-1); border: 1px solid var(--border);
+      color: var(--text); padding: 14px; border-radius: 12px; font-family: inherit; font-size: 14px;
+      outline: none; transition: 0.2s ease;
+    }
+    .room-input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-soft); }
+    
+    /* Lobby */
+    .room-lobby { display: none; grid-template-columns: 1.5fr 1fr; gap: 24px; }
+    .room-lobby.show { display: grid; }
+    .room-card { background: var(--surface-2); border: 1px solid var(--border); border-radius: 20px; padding: 24px; }
+    .lobby-main { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+    .badge {
+      display: inline-flex; align-items: center; padding: 6px 12px; border-radius: 999px;
+      background: var(--surface-3); border: 1px solid var(--border);
+      font-size: 12px; font-weight: 700; color: var(--text);
+    }
+    .badge.hot { background: rgba(255,77,107,0.1); border-color: rgba(255,77,107,0.2); color: var(--red); }
+    .big-room-code {
+      margin: 24px 0; background: var(--surface-1); border: 1px solid var(--primary-soft);
+      padding: 24px 48px; border-radius: 16px; text-align: center;
+    }
+    .big-room-code span { display: block; font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .big-room-code b { font-size: 48px; font-weight: 900; letter-spacing: 8px; color: var(--primary); font-variant-numeric: tabular-nums; line-height: 1; display: block; }
+    
+    .player-list { display: grid; gap: 8px; margin-top: 16px; }
+    .player {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 16px; background: var(--surface-1); border: 1px solid var(--border);
+      border-radius: 12px; font-size: 14px; font-weight: 600;
+    }
+
+    /* Game Stage */
+    .game-stage { display: none; grid-template-columns: 1.5fr 1fr; gap: 24px; }
+    .game-stage.show { display: grid; }
+    .game-stage.player-view { grid-template-columns: 1fr; max-width: 800px; margin: 0 auto; }
+    .game-stage.player-view .host-side { display: none; }
+    .game-stage.show-final { grid-template-columns: 1fr; }
+    .game-stage.show-final .game-main-card, .game-stage.show-final .host-side, .game-stage.show-final .round-summary-card { display: none !important; }
+    
+    .game-card { background: var(--surface-2); border: 1px solid var(--border); border-radius: 20px; padding: 24px; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+    .game-main-card { min-height: 500px; }
+    
+    .game-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .timer-ring {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: conic-gradient(var(--accent) var(--progress, 100%), var(--surface-3) 0);
+      display: grid; place-items: center; font-weight: 800; font-size: 16px; color: var(--text);
+    }
+    .timer-ring span {
+      width: 54px; height: 54px; border-radius: 50%; background: var(--surface-2);
+      display: grid; place-items: center;
+    }
+    .timer-ring.danger { animation: pulse 1s infinite; }
+
+    .puzzle-frame {
+      flex-grow: 1; background: var(--surface-1); border: 1px solid var(--border);
+      border-radius: 16px; display: grid; place-items: center; position: relative;
+      margin-bottom: 24px; min-height: 240px; padding: 24px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+    }
+    .puzzle-title { position: absolute; top: 16px; left: 16px; display: flex; gap: 8px; z-index: 2; }
+    .puzzle-img { width: 100%; height: 100%; object-fit: contain; display: none; border-radius: 8px; }
+    .puzzle-img.show { display: block; }
+    .puzzle-art { font-size: 64px; letter-spacing: 16px; }
+    .puzzle-frame.has-image { background: #000; padding: 12px; border-color: rgba(255,255,255,0.1); }
+    
+    .puzzle-question { font-size: 18px; font-weight: 700; margin-bottom: 12px; text-align: center; }
+    .hint-box { font-size: 14px; color: var(--text-secondary); text-align: center; margin-bottom: 24px; background: var(--surface-1); padding: 12px; border-radius: 12px; border: 1px solid var(--border); }
+    
+    .reveal-word { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+    .letter-box {
+      width: 52px; height: 60px; border-radius: 12px;
+      background: var(--surface-3); border: 1px solid var(--border);
+      display: grid; place-items: center; font-size: 24px; font-weight: 800; color: #fff;
+    }
+    .letter-box.blank { background: var(--surface-1); color: transparent; border-style: dashed; }
+    .letter-box.revealed { background: var(--primary); border-color: var(--primary); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .letter-space { width: 20px; }
+    
+    .answer-row { display: flex; gap: 12px; width: 100%; }
+    .game-input {
+      flex-grow: 1; background: var(--surface-1); border: 1px solid var(--border);
+      color: var(--text); padding: 14px 20px; border-radius: 12px; font-family: inherit; font-size: 16px; outline: none; transition: 0.2s ease;
+    }
+    .game-input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-soft); }
+    .game-input:disabled { opacity: 0.5; cursor: not-allowed; }
+    .answer-state { margin-top: 12px; text-align: center; font-size: 14px; font-weight: 600; color: var(--gold); min-height: 21px; }
+
+    .host-side { display: grid; gap: 24px; grid-auto-rows: min-content; }
+    .host-status-box {
+      background: var(--surface-1); border: 1px solid var(--border);
+      padding: 16px; border-radius: 12px; margin: 16px 0;
+    }
+    .host-status-box b { display: block; font-size: 16px; margin-bottom: 4px; }
+    .host-status-box p { color: var(--text-secondary); font-size: 13px; margin: 0; }
+    .room-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+    
+    .leaderboard { display: grid; gap: 8px; }
+    .rank {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 16px; background: var(--surface-1); border: 1px solid var(--border);
+      border-radius: 12px; font-size: 14px; font-weight: 600;
+    }
+    .rank.me { border-color: var(--primary); background: var(--primary-soft); }
+    .leaderboard.big .rank { padding: 16px 20px; font-size: 18px; border-radius: 16px; }
+    
+    .round-summary-card, .final-summary-card { display: none; grid-column: 1 / -1; }
+    .round-summary-card.show, .final-summary-card.show { display: flex; animation: slideUp 0.3s ease; }
+    .final-title { display: flex; justify-content: space-between; margin-bottom: 24px; align-items: flex-start; }
+    
+    /* Practice Mode */
+    .practice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .practice-card { background: var(--surface-2); border: 1px solid var(--border); border-radius: 20px; padding: 24px; }
+    .ai-source-box { margin-top: 24px; display: grid; gap: 16px; }
+    .ai-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .ai-field label { display: block; font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; }
+    .ai-field select, .ai-field input {
+      width: 100%; background: var(--surface-1); border: 1px solid var(--border);
+      color: var(--text); padding: 12px; border-radius: 10px; font-family: inherit; font-size: 14px; outline: none;
+    }
+    .ai-field select:focus, .ai-field input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
+    
+    .practice-quiz { display: none; max-width: 800px; margin: 0 auto; }
+    .practice-quiz.show { display: block; }
+    .practice-main { background: var(--surface-2); border: 1px solid var(--border); border-radius: 20px; padding: 32px; }
+    .practice-progress { height: 6px; background: var(--surface-1); border-radius: 999px; margin-bottom: 24px; overflow: hidden; }
+    .practice-progress span { display: block; height: 100%; background: var(--accent); transition: width 0.3s ease; }
+    .practice-options { display: grid; gap: 12px; margin: 24px 0; }
+    .option-btn {
+      background: var(--surface-1); border: 1px solid var(--border); color: var(--text);
+      padding: 16px; border-radius: 12px; font-family: inherit; font-size: 15px; font-weight: 600;
+      text-align: left; cursor: pointer; transition: 0.2s ease;
+    }
+    .option-btn:hover { border-color: var(--accent); background: var(--accent-soft); }
+    .option-btn.correct { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+    .option-btn.wrong { border-color: var(--red); background: rgba(255,77,107,0.1); color: var(--red); }
+    
+    .blank-answer-box { display: flex; gap: 12px; }
+    .blank-answer-box input {
+      flex-grow: 1; background: var(--surface-1); border: 1px solid var(--border);
+      color: var(--text); padding: 14px 20px; border-radius: 12px; font-family: inherit; font-size: 16px; outline: none;
+    }
+    
+    .ai-explain { display: none; margin-bottom: 24px; padding: 16px; background: var(--surface-1); border-left: 4px solid var(--accent); border-radius: 8px; font-size: 14px; line-height: 1.6; }
+    .ai-explain.show { display: block; }
+    .ai-explain b { display: block; color: var(--accent); margin-bottom: 8px; }
+
+    .confetti { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+    .confetti i { position: absolute; width: 8px; height: 16px; background: var(--accent); top: -20px; animation: fall 1.2s linear forwards; border-radius: 4px; }
+    @keyframes fall { to { transform: translateY(600px) rotate(720deg); opacity: 0; } }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 768px) {
+      .quick-actions, .role-screen, .room-lobby, .game-stage, .practice-grid, .ai-form-row { grid-template-columns: 1fr; }
+      h1 { font-size: 28px; }
+      .surface { padding: 16px; }
+      .game-card { padding: 16px; }
+      .letter-box { width: 36px; height: 44px; font-size: 18px; }
+      .letter-space { width: 10px; }
+      .answer-row { flex-direction: column; }
+      .puzzle-art { font-size: 40px; letter-spacing: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <div class="brand">
+        <div class="logo">ML</div>
+        <div>
+          <div class="brand-title">MLN122</div>
+          <div class="brand-sub">Nguyên tắc đoàn kết quốc tế</div>
+        </div>
+      </div>
+      <nav class="nav-tabs">
+        <button class="tab-btn active">🎮 Game & AI</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="eyebrow"><span class="dot"></span> MLN122 · 5.2.3</div>
+      <h1>Đoàn kết quốc tế<br><span class="accent-text">Học bằng cách chơi.</span></h1>
+      <p class="lead">Đoán hình – thi đấu 10 câu – tích điểm theo tốc độ. Hoặc luyện tập với AI trước khi vào phòng.</p>
+      <div class="hero-stats">
+        <div><b>10</b><span>Câu hỏi</span></div>
+        <div><b>20s</b><span>Mỗi câu</span></div>
+        <div><b>100</b><span>Điểm tối đa</span></div>
+      </div>
+    </section>
+
+    <section class="quick-actions" aria-label="Chọn hoạt động">
+      <button class="action-card action-host" id="quickHost" type="button">
+        <span class="action-icon">＋</span><span class="action-tag">QUẢN TRÒ</span>
+        <strong>Tạo phòng</strong>
+        <p>Tạo mã phòng và điều khiển 10 câu hỏi.</p>
+        <span class="action-link">Bắt đầu →</span>
+      </button>
+      <button class="action-card action-join" id="quickJoin" type="button">
+        <span class="action-icon">↗</span><span class="action-tag">NGƯỜI CHƠI</span>
+        <strong>Tham gia phòng</strong>
+        <p>Nhập mã phòng để thi đấu cùng mọi người.</p>
+        <span class="action-link">Vào phòng →</span>
+      </button>
+      <button class="action-card action-ai" id="quickAI" type="button">
+        <span class="action-icon">✦</span><span class="action-tag">AI TUTOR</span>
+        <strong>Ôn luyện với AI</strong>
+        <p>Luyện câu hỏi lý thuyết trước khi thi đấu.</p>
+        <span class="action-link">Luyện tập →</span>
+      </button>
+    </section>
+
+    <div class="surface">
+      <section id="game" class="tab-panel active">
+        <div class="section-head">
+          <div class="kicker">Game ôn tập</div>
+          <h2>Ôn tập</h2>
+        </div>
+        
+        <div class="game-shell">
+          <div class="game-mode-tabs" id="gameModeSelector">
+            <button class="game-mode-btn active" data-game-mode="roomMode">🎮 Chơi đuổi hình bắt chữ</button>
+            <button class="game-mode-btn" data-game-mode="practiceMode">🧠 Ôn luyện lý thuyết với AI</button>
+          </div>
+
+          <div class="game-mode-panel show" id="roomMode">
+            <button class="game-btn alt mode-back" type="button">← Chọn chế độ khác</button>
+            <div class="role-screen" id="roleScreen">
+              <div class="role-card host-card">
+                <div class="role-icon">🎮</div>
+                <h3>Bạn là Quản Trò?</h3>
+                <p>Tạo phòng mới, hiển thị mã phòng và điều khiển game ôn tập.</p>
+                <button class="role-select" id="chooseHost">Chọn Quản Trò</button>
+                <div class="role-form" id="hostForm">
+                  <input id="hostRoomName" class="room-input" placeholder="Tên phòng" maxlength="24" />
+                  <button id="createRoom" class="game-btn">Tạo phòng mới</button>
+                </div>
+              </div>
+              <div class="role-card player-card">
+                <div class="role-icon">👥</div>
+                <h3>Bạn là Người Chơi?</h3>
+                <p>Nhập mã phòng từ màn hình của quản trò để tham gia.</p>
+                <button class="role-select amber" id="choosePlayer">Chọn Người Chơi</button>
+                <div class="role-form" id="playerForm">
+                  <input id="roomInput" class="room-input" placeholder="Nhập mã phòng" maxlength="5" />
+                  <input id="playerName" class="room-input" placeholder="Tên bạn" maxlength="18" />
+                  <button id="joinRoom" class="game-btn amber-btn">Tham gia ngay</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="room-lobby" id="roomLobby">
+              <div class="room-card lobby-main">
+                <div>
+                  <span class="badge hot" id="roleBadge">Quản trò</span>
+                  <h3 id="lobbyTitle" style="margin: 16px 0 8px;">Phòng ôn tập</h3>
+                  <p class="game-note" id="lobbyDesc">Chia sẻ mã phòng cho người chơi. Khi đủ người, quản trò bấm “Bắt đầu game”.</p>
+                </div>
+                <div class="big-room-code">
+                  <span>Mã phòng</span>
+                  <b id="roomCode">-----</b>
+                </div>
+                <div class="room-actions">
+                  <button id="startGameLobby" class="game-btn good">Bắt đầu game</button>
+                </div>
+              </div>
+              <div class="room-card">
+                <h3 style="margin-bottom: 16px;">Người chơi trong phòng</h3>
+                <div class="player-list" id="playerList"></div>
+              </div>
+            </div>
+
+            <div class="game-stage" id="gameStage">
+              <div class="game-card game-main-card" id="gameMainCard">
+                <div class="confetti" id="confetti"></div>
+                <div class="game-top">
+                  <div style="display:flex;gap:8px;flex-wrap:wrap">
+                    <span class="badge hot" id="roundBadge">Câu 1/10</span>
+                    <span class="badge">Điểm câu này: <b id="currentPoint" style="margin-left: 4px; color: var(--gold);">100</b></span>
+                  </div>
+                  <div class="timer-ring" id="timerRing"><span id="timerText">30s</span></div>
+                </div>
+
+                <div class="puzzle-frame">
+                  <div class="puzzle-title">
+                    <span class="badge" id="categoryBadge">Lý thuyết</span>
+                    <span class="badge">Đuổi hình bắt chữ</span>
+                  </div>
+                  <img class="puzzle-img" id="puzzleImage" src="" alt="Ảnh câu hỏi" />
+                  <div class="puzzle-art" id="puzzleArt">🏭 ➜ 🏢</div>
+                </div>
+
+                <div class="puzzle-question" id="puzzleQuestion">Câu hỏi sẽ hiện ở đây.</div>
+                <div class="hint-box" id="hintBox">Gợi ý sẽ hiện ở đây.</div>
+                
+                <div class="reveal-word" id="answerBoxes" aria-label="Ô chữ đáp án"></div>
+                
+                <div class="answer-row compact">
+                  <input id="answerInput" class="game-input" placeholder="Nhập đáp án..." autocomplete="off" />
+                  <button id="submitAnswer" class="game-btn good">Trả lời</button>
+                </div>
+                <div class="answer-state" id="answerState"></div>
+              </div>
+
+              <div class="score-panel host-side" id="hostSidePanel">
+                <div class="game-card">
+                  <h3 style="margin-bottom: 16px;">Điều khiển quản trò</h3>
+                  <div class="host-status-box">
+                    <b id="hostProgressText">Đang chờ bắt đầu</b>
+                    <p id="statusText">Tạo phòng rồi bấm “Bắt đầu game”.</p>
+                  </div>
+                  <div class="room-actions">
+                    <button id="startGame" class="game-btn">Bắt đầu game</button>
+                    <button id="resetGame" class="game-btn alt">Chơi lại</button>
+                  </div>
+                </div>
+                <div class="game-card" style="flex-grow: 1;">
+                  <h3 style="margin-bottom: 16px;">Bảng điểm hiện tại</h3>
+                  <div class="leaderboard" id="leaderboard"></div>
+                </div>
+              </div>
+
+              <div class="game-card round-summary-card" id="roundSummaryCard">
+                <h3 id="roundSummaryTitle" style="margin-bottom: 16px;">Bảng điểm hiện tại</h3>
+                <div class="leaderboard" id="roundLeaderboard"></div>
+                <p class="summary-note" id="roundSummaryNote" style="margin-top: 24px; color: var(--text-secondary); text-align: center;">Đang chờ chuyển sang câu tiếp theo...</p>
+              </div>
+
+              <div class="game-card final-summary-card" id="finalLeaderboardCard">
+                <div class="final-title">
+                  <div>
+                    <h3 style="font-size: 28px; margin-bottom: 8px;">VINH DANH TOP 3</h3>
+                    <p style="color: var(--text-secondary);">Hoàn thành đủ 10 câu — 3 người chơi có tổng điểm cao nhất sẽ được vinh danh.</p>
+                  </div>
+                  <span class="badge hot">Top 3</span>
+                </div>
+                <div class="leaderboard big" id="finalLeaderboard"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="game-mode-panel" id="practiceMode">
+            <button class="game-btn alt mode-back" type="button">← Chọn chế độ khác</button>
+            <div class="practice-grid" id="practiceSetup">
+              <div class="practice-card intro">
+                <span class="badge hot" style="margin-bottom: 16px;">AI Tutor</span>
+                <h3 style="font-size: 20px; margin-bottom: 12px;">Ôn tập với AI từ học liệu</h3>
+                <p style="color: var(--text-secondary); font-size: 14px;">Người học chỉ cần chọn số câu muốn luyện và dạng câu hỏi phù hợp.</p>
+
+                <div class="ai-source-box">
+                  <div class="ai-form-row">
+                    <div class="ai-field">
+                      <label for="aiQuestionCount">Số câu muốn luyện tập</label>
+                      <input id="aiQuestionCount" type="number" min="1" max="50" value="10" />
+                    </div>
+                    <div class="ai-field">
+                      <label for="questionType">Dạng câu hỏi</label>
+                      <select id="questionType">
+                        <option value="multiple_choice">Multiple choice</option>
+                        <option value="fill_blank">Điền vào chỗ trống</option>
+                        <option value="mixed">Kết hợp cả hai</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="room-actions" style="margin-top: 16px; justify-content: flex-start;">
+                    <button id="startPractice" class="game-btn good">Bắt đầu</button>
+                    <button id="useDefaultPractice" class="game-btn alt">Dùng bộ câu hỏi dự phòng</button>
+                  </div>
+                  <p class="game-note" id="practiceGenerateStatus" style="margin-top: 12px; font-size: 13px; color: var(--text-secondary);">Sẵn sàng tạo câu hỏi.</p>
+                </div>
+              </div>
+              <div class="practice-card">
+                <h3 style="font-size: 20px; margin-bottom: 12px;">Cách hoạt động</h3>
+                <ul style="color: var(--text-secondary); font-size: 14px; padding-left: 20px; line-height: 1.8;">
+                  <li>Nhập tối đa <b>50 câu</b> cho một lần ôn tập.</li>
+                  <li>Chọn <b>Multiple choice</b>, <b>Điền vào chỗ trống</b> hoặc <b>Kết hợp</b>.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="practice-quiz" id="practiceQuiz">
+              <div class="practice-main">
+                <div class="game-top">
+                  <div style="display:flex;gap:8px;flex-wrap:wrap">
+                    <span class="badge hot" id="practiceCounter">Câu 1/10</span>
+                    <span class="badge">Điểm: <b id="practiceScore" style="margin-left: 4px; color: var(--gold);">0</b></span>
+                  </div>
+                  <span class="badge" id="practiceTopic">Lý thuyết</span>
+                </div>
+                
+                <div class="practice-progress"><span id="practiceProgress" style="width: 0%;"></span></div>
+                
+                <h3 id="practiceQuestion" style="font-size: 20px; margin-bottom: 24px;">Câu hỏi sẽ hiện ở đây</h3>
+                
+                <div class="practice-options" id="practiceOptions"></div>
+                
+                <div class="ai-explain" id="aiExplain">
+                  <b>AI giải thích</b>
+                  <p>Chọn một đáp án để xem giải thích.</p>
+                </div>
+                
+                <div class="room-actions" style="margin-top: 32px;">
+                  <button id="prevPractice" class="game-btn alt">Câu trước</button>
+                  <button id="nextPractice" class="game-btn">Câu tiếp theo</button>
+                  <button id="restartPractice" class="game-btn alt">Ôn lại</button>
+                </div>
+              </div>
+              
+              <div class="game-card final-practice-card" id="practiceFinalCard" style="display:none; margin-top: 24px; text-align: center;">
+                <h3 style="margin-bottom: 16px;">Kết quả cuối</h3>
+                <div class="score-big" id="practiceResult" style="font-size: 48px; font-weight: 900; color: var(--gold); margin-bottom: 12px;">0/0</div>
+                <p class="game-note" id="practiceStatus" style="color: var(--text-secondary);">Hoàn thành bài ôn tập.</p>
+              </div>
+              <div class="feed" id="practiceFeed" style="display:none"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+  <!-- JS WILL BE APPENDED HERE -->
+</body>
+</html>
