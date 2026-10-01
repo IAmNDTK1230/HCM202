@@ -307,9 +307,9 @@
     }
 
     /* Game Stage */
-    .game-stage { display: none; grid-template-columns: 1.5fr 1fr; gap: 24px; }
+    .game-stage { display: none; grid-template-columns: minmax(0, 1fr) 340px; gap: 24px; align-items: start; }
     .game-stage.show { display: grid; }
-    .game-stage.player-view { grid-template-columns: 1fr; max-width: 800px; margin: 0 auto; }
+    .game-stage.player-view { grid-template-columns: minmax(0, 1fr); max-width: 960px; margin: 0 auto; }
     .game-stage.player-view .host-side { display: none; }
     .game-stage.show-final { grid-template-columns: 1fr; }
     .game-stage.show-final .game-main-card, .game-stage.show-final .host-side, .game-stage.show-final .round-summary-card { display: none !important; }
@@ -489,7 +489,13 @@
     .guide-step strong { display: block; margin-bottom: 4px; font-size: 14px; }
     .guide-step p { color: var(--text-secondary); font-size: 13px; line-height: 1.5; margin: 0; }
 
-    @media (max-width: 768px) {
+        @media (max-width: 1100px) {
+      .game-stage { grid-template-columns: 1fr; max-width: 960px; margin: 0 auto; }
+      .game-stage .game-main-card { width: 100%; }
+      .game-stage.host-view .host-side { display: grid !important; }
+    }
+
+@media (max-width: 768px) {
       .guide-steps { grid-template-columns: 1fr 1fr; }
       .quick-actions, .role-screen, .room-lobby, .game-stage, .practice-grid, .ai-form-row { grid-template-columns: 1fr; }
       h1 { font-size: 28px; }
@@ -1372,7 +1378,7 @@
         const me = players.find(p => p.me);
         if(me) score = me.score;
         $('roomCode').textContent = room;
-        $('lobbyTitle').textContent = roomData.roomName || ('Ph??ng ' + room);
+        $('lobbyTitle').textContent = roomData.roomName || ('Phòng ' + room);
         renderPlayers();
         updateHostProgress();
         updateStageLayout();
@@ -1421,7 +1427,9 @@
               ? 'Đang trong câu hỏi. Khi tất cả người chơi trả lời hoặc hết giờ, hệ thống sẽ hiện top 5.'
               : answered ? 'Bạn đã trả lời xong. Đang chờ các người chơi khác.' : 'Hãy nhập đáp án trước khi hết giờ.';
             updateHostProgress();
-            if(playing && !timer){
+            // Cả host và player đều dùng cùng timestamp của Firebase.
+            updateTimer();
+            if(!timer){
               timer = setInterval(updateTimer, 250);
             }
             const activePlayers = getActivePlayers(players);
@@ -1505,7 +1513,7 @@
       room = code;
       $('roomCode').textContent = room;
       $('lobbyTitle').textContent = 'Ph??ng ' + room;
-      $('lobbyDesc').textContent = '??ang tham gia ph??ng...';
+      $('lobbyDesc').textContent = 'Đang tham gia phòng...';
       $('statusText').textContent = 'Đang kết nối Firebase...';
       showLobby('player');
       try{
@@ -1553,7 +1561,13 @@
       return 0;
     }
     function updateTimer(){
-      if(playing){
+      // Đồng bộ thời gian theo timestamp của phòng để QUẢN TRÒ và NGƯỜI CHƠI
+      // luôn đếm cùng một đồng hồ, kể cả khi một thiết bị vào phòng trễ.
+      let startMs = Number(roomData?.questionStartedAtMs || 0);
+      if(!startMs && roomData?.questionStartedAt?.toMillis) startMs = roomData.questionStartedAt.toMillis();
+      if(startMs){
+        timeLeft = Math.max(0, QUESTION_TIME - Math.floor((Date.now() - startMs) / 1000));
+      } else if(playing){
         const elapsed = Math.max(0, Math.floor((Date.now() - questionStartMs) / 1000));
         timeLeft = Math.max(0, QUESTION_TIME - elapsed);
       }
@@ -1643,23 +1657,38 @@
       revealedIndexes = new Set();
       revealOrder = makeRevealOrder(puzzle.answer);
       lastRevealStep = 0;
-      timeLeft = Math.max(0, QUESTION_TIME - Math.max(0, Math.floor((Date.now() - questionStartMs) / 1000)));
+      const sharedStartMs = Number(roomData?.questionStartedAtMs || startMs || questionStartMs);
+      timeLeft = Math.max(0, QUESTION_TIME - Math.max(0, Math.floor((Date.now() - sharedStartMs) / 1000)));
       $('roundBadge').textContent = `Câu ${round+1}/${puzzles.length}`;
       $('categoryBadge').textContent = puzzle.category;
       const frame = document.querySelector('.puzzle-frame');
       const img = $('puzzleImage');
       const art = $('puzzleArt');
       if(puzzle.image && img){
-        img.src = puzzle.image;
         img.alt = 'Ảnh minh họa cho câu hỏi ' + (round + 1);
         img.classList.add('show');
         if(frame) frame.classList.add('has-image');
         if(art) art.style.display = 'none';
-        img.onerror = () => {
+
+        // Hỗ trợ cả Images/ và images/ để tránh lỗi phân biệt hoa-thường
+        // khi deploy lên Vercel/Linux.
+        const candidates = [
+          puzzle.image,
+          String(puzzle.image).replace(/^Images\//, 'images/'),
+          String(puzzle.image).replace(/^images\//, 'Images/')
+        ].filter((v, i, a) => v && a.indexOf(v) === i);
+        let imageIndex = 0;
+        const tryNextImage = () => {
+          if(imageIndex < candidates.length){
+            img.src = candidates[imageIndex++];
+            return;
+          }
           img.classList.remove('show');
           if(frame) frame.classList.remove('has-image');
           if(art){ art.style.display = 'block'; art.textContent = puzzle.art || '🧠'; }
         };
+        img.onerror = tryNextImage;
+        tryNextImage();
       } else {
         if(img) img.classList.remove('show');
         if(frame) frame.classList.remove('has-image');
@@ -1712,7 +1741,8 @@
       revealOrder = [];
       lastRevealStep = 0;
       clearInterval(timer);
-      loadRound(startMs || Date.now());
+      loadRound(startMs || Number(roomData?.questionStartedAtMs) || Date.now());
+      updateTimer();
       timer = setInterval(updateTimer, 250);
       updateStageLayout();
       if(currentRole === 'host') setAnswerDisabled(true);
@@ -1790,7 +1820,7 @@
           [`answeredPlayers.${localPlayerId}`]: { correct: true, earned, at: Date.now(), question: round }
         });
         if(currentRole === 'host' && getActivePlayers(players).length <= 1){
-          await openRoundReview(`Ho??n th??nh c??u ${round+1}.`);
+          await openRoundReview(`Hoàn thành câu ${round+1}.`);
         }
       }catch(err){
         console.error(err);
