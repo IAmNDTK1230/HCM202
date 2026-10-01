@@ -926,7 +926,7 @@
       .toUpperCase()
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g,'')
-      .replace(/??/g,'D')
+      .replace(/Đ/g,'D')
       .replace(/[^A-Z0-9]/g,'');
 
 
@@ -1111,13 +1111,10 @@
       });
     }
     function cleanExplainText(text){
-      return String(text || '')
-        .replace(/^\s*????ng\s+v??\s*/i, '')
-        .replace(/^\s*????ng,?\s*/i, '')
-        .trim();
+      return String(text || '').trim();
     }
     function cleanAnswer(text){
-      return String(text || '').toLowerCase().normalize('NFD').replace(/[??-??]/g,'').replace(/[^a-z0-9\s]/g,'').replace(/\s+/g,' ').trim();
+      return String(text || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').replace(/\s+/g,' ').trim();
     }
     function answerBlankPractice(value){
       if(practiceAnswered) return;
@@ -1907,11 +1904,38 @@
 
 <script>
 (function(){
-  const host=document.getElementById('quickHost'), join=document.getElementById('quickJoin'), ai=document.getElementById('quickAI');
-  function scrollToGame(){document.getElementById('game')?.scrollIntoView({behavior:'smooth',block:'start'});}
-  host?.addEventListener('click',()=>{scrollToGame();setTimeout(()=>document.getElementById('chooseHost')?.click(),250);});
-  join?.addEventListener('click',()=>{scrollToGame();setTimeout(()=>document.getElementById('choosePlayer')?.click(),250);});
-  ai?.addEventListener('click',()=>{scrollToGame();setTimeout(()=>{const b=document.querySelector('[data-game-mode="practiceMode"]');b?.click();},250);});
+  const host=document.getElementById('quickHost');
+  const join=document.getElementById('quickJoin');
+  const ai=document.getElementById('quickAI');
+  const game=document.getElementById('game');
+  const roomPanel=document.getElementById('roomMode');
+  const practicePanel=document.getElementById('practiceMode');
+  const modeButtons=document.querySelectorAll('.game-mode-btn');
+  function scrollToGame(){ game?.scrollIntoView({behavior:'smooth',block:'start'}); }
+  function showRoom(){
+    roomPanel?.classList.add('show');
+    practicePanel?.classList.remove('show');
+    modeButtons.forEach(b=>b.classList.toggle('active', b.dataset.gameMode==='roomMode'));
+  }
+  function showPractice(){
+    practicePanel?.classList.add('show');
+    roomPanel?.classList.remove('show');
+    modeButtons.forEach(b=>b.classList.toggle('active', b.dataset.gameMode==='practiceMode'));
+  }
+  host?.addEventListener('click',()=>{
+    scrollToGame();
+    showRoom();
+    setTimeout(()=>document.getElementById('chooseHost')?.click(),350);
+  });
+  join?.addEventListener('click',()=>{
+    scrollToGame();
+    showRoom();
+    setTimeout(()=>document.getElementById('choosePlayer')?.click(),350);
+  });
+  ai?.addEventListener('click',()=>{
+    scrollToGame();
+    showPractice();
+  });
 })();
 </script>
 </body>
