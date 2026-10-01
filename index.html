@@ -546,13 +546,13 @@
 
     <section class="quick-actions" aria-label="Chọn hoạt động">
       <button class="action-card action-host" id="quickHost" type="button">
-        <span class="action-icon">＋</span><span class="action-tag">QUẢN TRÒ</span>
+        <span class="action-icon">🎮</span><span class="action-tag">QUẢN TRÒ</span>
         <strong>Tạo phòng</strong>
         <p>Tạo phòng mới, chia sẻ mã phòng để mọi người cùng tham gia ôn tập.</p>
         <span class="action-link">Bắt đầu →</span>
       </button>
       <button class="action-card action-join" id="quickJoin" type="button">
-        <span class="action-icon">↗</span><span class="action-tag">NGƯỜI CHƠI</span>
+        <span class="action-icon">👥</span><span class="action-tag">NGƯỜI CHƠI</span>
         <strong>Tham gia phòng</strong>
         <p>Nhập mã phòng từ quản trò để vào phòng ôn tập cùng mọi người.</p>
         <span class="action-link">Vào phòng →</span>
@@ -673,7 +673,7 @@
 
                 <div class="puzzle-frame">
                   <img class="puzzle-img" id="puzzleImage" src="" alt="Ảnh câu hỏi" />
-                  <div class="puzzle-art" id="puzzleArt">🏭 ➜ 🏢</div>
+                  <div class="puzzle-art" id="puzzleArt"></div>
                 </div>
 
                 <div class="puzzle-question" id="puzzleQuestion">Câu hỏi sẽ hiện ở đây.</div>
@@ -1660,39 +1660,62 @@
       const sharedStartMs = Number(roomData?.questionStartedAtMs || startMs || questionStartMs);
       timeLeft = Math.max(0, QUESTION_TIME - Math.max(0, Math.floor((Date.now() - sharedStartMs) / 1000)));
       $('roundBadge').textContent = `Câu ${round+1}/${puzzles.length}`;
-      $('categoryBadge').textContent = puzzle.category;
+      if($('categoryBadge')) $('categoryBadge').textContent = puzzle.category;
       const frame = document.querySelector('.puzzle-frame');
       const img = $('puzzleImage');
       const art = $('puzzleArt');
       if(puzzle.image && img){
-        img.alt = 'Ảnh minh họa cho câu hỏi ' + (round + 1);
-        img.classList.add('show');
-        if(frame) frame.classList.add('has-image');
-        if(art) art.style.display = 'none';
+        img.alt = 'Ảnh minh họa cho câu ' + (round + 1);
+        img.classList.remove('show');
+        if(frame) frame.classList.remove('has-image');
+        if(art){ art.style.display = 'none'; art.textContent = ''; }
 
-        // Hỗ trợ cả Images/ và images/ để tránh lỗi phân biệt hoa-thường
-        // khi deploy lên Vercel/Linux.
+        // Repo hiện tại dùng đúng thư mục Images/cau_01.png ... cau_10.png.
+        // Thử thêm đường dẫn tuyệt đối và ./ để hoạt động ổn trên Vercel.
+        const rawPath = String(puzzle.image).replace(/^\.\//, '');
         const candidates = [
-          puzzle.image,
-          String(puzzle.image).replace(/^Images\//, 'images/'),
-          String(puzzle.image).replace(/^images\//, 'Images/')
+          rawPath,
+          './' + rawPath,
+          '/' + rawPath
         ].filter((v, i, a) => v && a.indexOf(v) === i);
         let imageIndex = 0;
+
+        img.onload = () => {
+          img.classList.add('show');
+          if(frame) frame.classList.add('has-image');
+          if(art) art.style.display = 'none';
+        };
+
         const tryNextImage = () => {
           if(imageIndex < candidates.length){
-            img.src = candidates[imageIndex++];
+            const nextSrc = candidates[imageIndex++];
+            const sep = nextSrc.includes('?') ? '&' : '?';
+            img.src = nextSrc + sep + 'v=20261001';
             return;
           }
           img.classList.remove('show');
           if(frame) frame.classList.remove('has-image');
-          if(art){ art.style.display = 'block'; art.textContent = puzzle.art || '🧠'; }
+          if(art){
+            art.style.display = 'block';
+            art.textContent = 'Không tải được ảnh cau_' + String(round + 1).padStart(2, '0') + '.png';
+            art.style.fontSize = '18px';
+            art.style.letterSpacing = '0';
+            art.style.color = 'var(--text-secondary)';
+          }
+          console.error('Không tải được ảnh:', puzzle.image, candidates);
         };
+
         img.onerror = tryNextImage;
         tryNextImage();
       } else {
         if(img) img.classList.remove('show');
         if(frame) frame.classList.remove('has-image');
-          if(art){ art.style.display = 'block'; art.textContent = puzzle.art || '🧠'; }
+        if(art){
+          art.style.display = 'block';
+          art.textContent = 'Chưa cấu hình ảnh cho câu này.';
+          art.style.fontSize = '18px';
+          art.style.letterSpacing = '0';
+        }
       }
       $('puzzleQuestion').textContent = ''; 
       $('hintBox').innerHTML = '<b>💡 Gợi ý:</b> ' + puzzle.hint;
