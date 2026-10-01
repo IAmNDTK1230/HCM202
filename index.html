@@ -803,10 +803,9 @@
       </section>
     </div>
   </main>
-  <script type="module">
-
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import { getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot, serverTimestamp, arrayUnion } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+  <script>
 
     const firebaseConfig = {
       apiKey: "AIzaSyAoM9y8mxgz2Up7BxjJVJ3MZJNXT0ckfXc",
@@ -818,8 +817,27 @@
       measurementId: "G-SHY9PX3BV8"
     };
 
-    const firebaseApp = initializeApp(firebaseConfig);
-    const db = getFirestore(firebaseApp);
+    const firebaseApp = firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Compat wrappers — giữ nguyên cú pháp modular ở phần code bên dưới
+    function doc(db, collection, id) { return db.collection(collection).doc(id); }
+    async function setDoc(ref, data) { return ref.set(data); }
+    async function getDoc(ref) {
+      const snap = await ref.get();
+      const existsVal = snap.exists;
+      const dataFn = snap.data.bind(snap);
+      return { exists: () => existsVal, data: () => dataFn() };
+    }
+    async function updateDoc(ref, data) { return ref.update(data); }
+    function onSnapshot(ref, onNext, onError) {
+      return ref.onSnapshot(snap => {
+        const wrapped = { exists: () => snap.exists, data: () => snap.data() };
+        onNext(wrapped);
+      }, onError);
+    }
+    function serverTimestamp() { return firebase.firestore.FieldValue.serverTimestamp(); }
+    function arrayUnion(...args) { return firebase.firestore.FieldValue.arrayUnion(...args); }
     const tabButtons = document.querySelectorAll('.tab-btn');
     const panels = document.querySelectorAll('.tab-panel');
     function openTab(id){
