@@ -740,12 +740,10 @@
                       <input id="aiQuestionCount" type="number" min="1" max="50" value="10" />
                     </div>
                     <div class="ai-field">
-                      <label for="questionType">Dạng câu hỏi</label>
-                      <select id="questionType">
-                        <option value="multiple_choice">Multiple choice</option>
-                        <option value="fill_blank">Điền vào chỗ trống</option>
-                        <option value="mixed">Kết hợp cả hai</option>
-                      </select>
+                      <label>Dạng câu hỏi</label>
+                      <div class="room-input" style="cursor:default;display:flex;align-items:center;">
+                        Multiple choice
+                      </div>
                     </div>
                   </div>
 
@@ -760,7 +758,7 @@
                 <h3 style="font-size: 20px; margin-bottom: 12px;">Cách hoạt động</h3>
                 <ul style="color: var(--text-secondary); font-size: 14px; padding-left: 20px; line-height: 1.8;">
                   <li>Nhập tối đa <b>50 câu</b> cho một lần ôn tập.</li>
-                  <li>Chọn <b>Multiple choice</b>, <b>Điền vào chỗ trống</b> hoặc <b>Kết hợp</b>.</li>
+                  <li>Tất cả câu hỏi được tạo ở dạng <b>Multiple choice</b> với 4 lựa chọn.</li>
                 </ul>
               </div>
             </div>
@@ -988,40 +986,35 @@
       document.querySelectorAll('.count-btn').forEach(btn => btn.classList.toggle('active', Number(btn.dataset.count) === practiceCount));
     }
     function normalizePracticeQuestion(q, idx){
-      const type = q.type || q.questionType || (q.options ? 'multiple_choice' : 'fill_blank');
-      const base = {
-        type: type === 'fill_blank' ? 'fill_blank' : 'multiple_choice',
+      return {
+        type: 'multiple_choice',
         topic: q.topic || 'AI Tutor',
         q: q.q || q.question || `Câu hỏi ${idx+1}`,
-        explain: q.explain || q.explanation || 'AI chưa tạo giải thích.'
-      };
-      if(base.type === 'fill_blank'){
-        const answer = String(q.answer || q.correctAnswer || q.correct || '').trim();
-        const accepted = Array.isArray(q.acceptedAnswers) ? q.acceptedAnswers.map(x => String(x).trim()).filter(Boolean) : [];
-        return {...base, answer, acceptedAnswers: accepted.length ? accepted : [answer]};
-      }
-      return {
-        ...base,
-        options: q.options || [],
+        explain: q.explain || q.explanation || 'AI chưa tạo giải thích.',
+        options: Array.isArray(q.options) ? q.options : [],
         correct: Number.isInteger(q.correct) ? q.correct : Number(q.answerIndex || 0)
       };
     }
+
     function validPracticeQuestion(q){
-      if(q.type === 'fill_blank') return Boolean(q.answer || (q.acceptedAnswers && q.acceptedAnswers.length));
-      return Array.isArray(q.options) && q.options.length === 4 && q.correct >= 0 && q.correct <= 3;
+      return q &&
+        q.type === 'multiple_choice' &&
+        Array.isArray(q.options) &&
+        q.options.length === 4 &&
+        Number.isInteger(q.correct) &&
+        q.correct >= 0 &&
+        q.correct <= 3;
     }
-    function buildFallbackSet(count, type){
+
+    function buildFallbackSet(count){
       let bank = shuffleArray(theoryQuestions);
       while(bank.length < count) bank = bank.concat(shuffleArray(theoryQuestions));
-      let chosen = bank.slice(0, count).map((q, idx) => normalizePracticeQuestion(q, idx));
-      if(type === 'fill_blank'){
-        chosen = chosen.map((q, idx) => {
-          const correctText = q.options && q.options[q.correct] ? q.options[q.correct] : 'độc quyền';
-          return {type:'fill_blank', topic:q.topic, q:q.q.replace('?', ' — điền khái niệm hoặc ý chính phù hợp:'), answer:correctText, acceptedAnswers:[correctText], explain:q.explain};
-        });
-      }
-      return chosen;
+      return bank
+        .slice(0, count)
+        .map((q, idx) => normalizePracticeQuestion(q, idx))
+        .filter(validPracticeQuestion);
     }
+
     async function readSourceFile(file){
       if(!file) return '';
       const status = $('sourceFileStatus');
@@ -1048,20 +1041,20 @@
           const res = await fetch('/api/generate-quiz', {
             method: 'POST',
             headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({count: settings.count, questionType: settings.questionType})
+            body: JSON.stringify({count: settings.count, questionType: 'multiple_choice'})
           });
           const data = await res.json();
           if(!res.ok) throw new Error(data.error || 'Không gọi được AI');
           if(!Array.isArray(data.questions) || !data.questions.length) throw new Error('AI không trả về câu hỏi hợp lệ');
-          generated = data.questions.map(normalizePracticeQuestion).filter(validPracticeQuestion);
+          generated = data.questions.map(normalizePracticeQuestion).filter(validPracticeQuestion).slice(0, settings.count);
           if(status) status.textContent = 'AI đã tạo câu hỏi dựa trên học liệu .';
         }catch(err){
           console.warn('AI quiz fallback:', err);
-          generated = buildFallbackSet(settings.count, settings.questionType);
+          generated = buildFallbackSet(settings.count);
           if(status) status.textContent = 'Không gọi được AI, đang dùng bộ câu hỏi dự phòng.';
         }
       } else {
-        generated = buildFallbackSet(settings.count, settings.questionType);
+        generated = buildFallbackSet(settings.count);
       }
 
       practiceSet = generated.slice(0, settings.count);
@@ -1079,31 +1072,18 @@
     function renderPracticeQuestion(){
       const item = practiceSet[practiceIndex];
       practiceAnswered = false;
-      $('practiceCounter').textContent = `C??u ${practiceIndex+1}/${practiceSet.length}`;
-      $('practiceTopic').textContent = item.type === 'fill_blank' ? `${item.topic} · Điền chỗ trống` : `${item.topic} · Multiple choice`;
+      $('practiceCounter').textContent = `Câu ${practiceIndex+1}/${practiceSet.length}`;
+      $('practiceTopic').textContent = `${item.topic} · Multiple choice`;
       $('practiceQuestion').textContent = item.q;
       $('practiceQuiz').classList.remove('finished');
       const prevBtn = $('prevPractice');
       if(prevBtn) prevBtn.disabled = practiceIndex === 0;
-      $('practiceStatus').textContent = item.type === 'fill_blank' ? 'Nhập câu trả lời rồi bấm kiểm tra.' : 'Chọn đáp án để được chấm và giải thích.';
+      $('practiceStatus').textContent = 'Chọn đáp án để được chấm và giải thích.';
       $('practiceProgress').style.width = `${Math.round((practiceIndex / practiceSet.length) * 100)}%`;
       $('aiExplain').classList.remove('show');
       $('aiExplain').innerHTML = '<b>AI giải thích</b><p>Trả lời câu hỏi để xem giải thích.</p>';
       const box = $('practiceOptions');
       box.innerHTML = '';
-      if(item.type === 'fill_blank'){
-        const wrap = document.createElement('div');
-        wrap.className = 'blank-answer-box';
-        wrap.innerHTML = `<input id="blankAnswerInput" placeholder="Nhập câu trả lời của bạn..." /><button class="game-btn good" id="checkBlankAnswer">Kiểm tra</button>`;
-        box.appendChild(wrap);
-        setTimeout(() => {
-          const input = $('blankAnswerInput');
-          const btn = $('checkBlankAnswer');
-          if(input) input.addEventListener('keydown', e => { if(e.key === 'Enter') answerBlankPractice(input.value); });
-          if(btn) btn.addEventListener('click', () => answerBlankPractice(input ? input.value : ''));
-        }, 0);
-        return;
-      }
       item.options.forEach((option, i) => {
         const btn = document.createElement('button');
         btn.className = 'option-btn';
@@ -1303,7 +1283,7 @@
       const card = $('roundSummaryCard');
       if(!card) return;
       card.classList.toggle('show', !!show);
-      $('roundSummaryTitle').textContent = `Top 5 sau c??u ${Math.min(round + 1, puzzles.length)}`;
+      $('roundSummaryTitle').textContent = `Top 5 sau câu ${Math.min(round + 1, puzzles.length)}`;
       if(note) $('roundSummaryNote').textContent = note;
     }
     function showFinalLeaderboard(show){
@@ -1512,7 +1492,7 @@
       localPlayerName = name;
       room = code;
       $('roomCode').textContent = room;
-      $('lobbyTitle').textContent = 'Ph??ng ' + room;
+      $('lobbyTitle').textContent = 'Phòng ' + room;
       $('lobbyDesc').textContent = 'Đang tham gia phòng...';
       $('statusText').textContent = 'Đang kết nối Firebase...';
       showLobby('player');
